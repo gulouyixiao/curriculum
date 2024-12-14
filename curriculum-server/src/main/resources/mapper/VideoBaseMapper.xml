@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.curriculum.mapper.VideoBaseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.curriculum.model.po.VideoBase">
+        <id column="id" property="id" />
+        <result column="media_id" property="mediaId" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="title" property="title" />
+        <result column="tags" property="tags" />
+        <result column="video_type" property="videoType" />
+        <result column="grade" property="grade" />
+        <result column="description" property="description" />
+        <result column="cover" property="cover" />
+        <result column="timelength" property="timelength" />
+        <result column="start_time" property="startTime" />
+        <result column="parentid" property="parentid" />
+        <result column="style" property="style" />
+        <result column="create_date" property="createDate" />
+        <result column="change_date" property="changeDate" />
+        <result column="thumbup_count" property="thumbupCount" />
+        <result column="comment_count" property="commentCount" />
+        <result column="playback_volume" property="playbackVolume" />
+        <result column="member" property="member" />
+        <result column="audit_status" property="auditStatus" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, media_id, user_id, user_name, title, tags, video_type, grade, description, cover, timelength, start_time, parentid, style, create_date, change_date, thumbup_count, comment_count, playback_volume, member, audit_status, status
+    </sql>
+
+</mapper>

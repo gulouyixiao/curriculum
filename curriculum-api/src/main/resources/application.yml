@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: curriculum-api
+  main:
+    allow-circular-references: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost/test?serverTimezone=UTC&userUnicode=true&useSSL=false&
+    username: root
+    password: 123456
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 10
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+springfox:
+  documentation:
+    enabled: true
+## 日志文件配置路径
+#logging:
+#  config: classpath:log4j2-dev.xml
+server:
+  port: 10101
+
+
+curriculum:
+  jwt:
+    user-secret-key: curriculum_distribution_user_Wjz6A69BhUE3StNqBb7gQsOIlCx3g= # 设置jwt签名加密时使用的秘钥
+    user-ttl: 8640000000 # 设置jwt过期时间
+    user-token-name:  token # 设置前端传递过来的令牌名称
+
