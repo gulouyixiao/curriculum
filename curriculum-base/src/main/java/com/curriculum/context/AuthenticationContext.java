@@ -7,8 +7,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 public class AuthenticationContext {
 
-    public final static ThreadLocal<Long> contextHolder = new ThreadLocal<>();
-
     public static void setContext(Long id)
     {
         RequestContextHolder.currentRequestAttributes().setAttribute(JwtClaimsConstant.USER_ID, id,
