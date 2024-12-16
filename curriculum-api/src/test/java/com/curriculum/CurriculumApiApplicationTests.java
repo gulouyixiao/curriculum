@@ -45,18 +45,17 @@ class CurriculumApiApplicationTests {
 		System.out.println(code.getData());
 	}
 
-	@Test
-	void getCode2() {
-		mediaFilesService.getTags().forEach(System.out::println);
-	}
-
 //	@Test
 //	void getCode2() {
-//		long page = 1;
-//		long size = 10;
-//		PageParams pageParams = new PageParams(page, size);
-//		RestResponse<PageResult> videoBasePage = videoBaseService.getVideoBasePage(pageParams, "");
-//		videoBasePage.forEach(System.out::println);
+//		mediaFilesService.getVideoBasePage()
 //	}
+
+	@Test
+	void getCode2() {
+		long page = 1;
+		long size = 10;
+		PageParams pageParams = new PageParams(page, size);
+		RestResponse<PageResult> videoBasePage = videoBaseService.getVideoBasePage(pageParams, "");
+	}
 
 }

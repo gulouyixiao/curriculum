@@ -7,7 +7,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class VideoToMain {
-    private int id;
+    private Long id;
     private String username;
     private String title;
     private String description;
