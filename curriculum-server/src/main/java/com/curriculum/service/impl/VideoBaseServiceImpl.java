@@ -38,12 +38,10 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 			for (String s : tags.split(",")) {
 				queryWrapper.like(VideoBase::getTags,s);
 			}
-
 		}
 		Page<VideoBase> ipage = new Page<>(videoPageParams.getPage(),videoPageParams.getPageSize());
 
 		Page<VideoBase> videoBasePage = videoBaseMapper.selectPage(ipage, queryWrapper);
-
 
 		return new PageResult(videoBasePage.getRecords(),videoBasePage.getTotal(), videoPageParams.getPage(), videoPageParams.getPageSize());
 	}
