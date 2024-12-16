@@ -8,6 +8,7 @@ import com.curriculum.constant.UserConstants;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.UserMapper;
 import com.curriculum.model.dto.UserLoginDTO;
+import com.curriculum.model.dto.UserRegisterDTO;
 import com.curriculum.model.po.User;
 import com.curriculum.model.vo.UserLoginVO;
 import com.curriculum.properties.JwtProperties;
@@ -46,7 +47,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		//验证码校验
 		picCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
 
-		String username = userLoginDTO.getUsername();
+		String username = userLoginDTO.getUserName();
 		String password = userLoginDTO.getPassword();
 
 		// 登录前置校验
@@ -79,13 +80,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 				claims);
 		UserLoginVO userLoginVO = UserLoginVO.builder()
 				.id(user.getId())
-				.username(user.getUsername())
-				.nickname(user.getNickname())
+				.userName(user.getUsername())
+				.nickName(user.getNickname())
 				.token(token)
 				.build();
 
 		
 		return userLoginVO;
+	}
+
+	/**
+	 * 注册
+	 * @param userRegisterDTO
+	 */
+	@Override
+	public void register(UserRegisterDTO userRegisterDTO) {
+
 	}
 
 	private User getByUserName(String username) {

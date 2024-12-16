@@ -2,6 +2,7 @@ package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.dto.UserLoginDTO;
+import com.curriculum.model.dto.UserRegisterDTO;
 import com.curriculum.model.po.User;
 import com.curriculum.model.vo.UserLoginVO;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,4 +18,10 @@ public interface UserService extends IService<User> {
 	 * @return
 	 */
 	UserLoginVO login( UserLoginDTO userLoginDTO);
+
+	/**
+	 * 注册
+	 * @param userRegisterDTO
+	 */
+	void register(UserRegisterDTO userRegisterDTO);
 }

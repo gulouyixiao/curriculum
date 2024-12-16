@@ -2,6 +2,7 @@ package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.UserLoginDTO;
+import com.curriculum.model.dto.UserRegisterDTO;
 import com.curriculum.model.vo.CheckCodeResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.model.vo.UserLoginVO;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 /**
- * 用户表 前端控制器
+ * 用户
  */
 @Slf4j
 @RestController
@@ -56,5 +57,19 @@ public class UserController {
         return RestResponse.success(userLoginVO);
     }
 
+
+    /**
+     * 注册
+     * @param userRegisterDTO
+     * @return
+     */
+    @PostMapping("/register")
+    @ApiOperation(value = "注册")
+    @Anonymous
+    public RestResponse register(@RequestBody UserRegisterDTO userRegisterDTO) {
+        log.info("注册：{}", userRegisterDTO);
+        userService.register(userRegisterDTO);
+        return RestResponse.success();
+    }
 
 }
