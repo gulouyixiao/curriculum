@@ -5,7 +5,10 @@ import com.curriculum.mapper.MediaFilesMapper;
 import com.curriculum.model.po.MediaFiles;
 import com.curriculum.service.MediaFilesService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -18,4 +21,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFiles> implements MediaFilesService {
 
+    @Autowired
+    private MediaFilesMapper mediaFilesMapper;
+    @Override
+    public List<String> getTags() {
+        return mediaFilesMapper.getTags();
+    }
 }

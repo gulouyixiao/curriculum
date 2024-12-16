@@ -3,6 +3,8 @@ package com.curriculum.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.po.MediaFiles;
 
+import java.util.List;
+
 /**
  * <p>
  * 媒资信息 服务类
@@ -13,4 +15,5 @@ import com.curriculum.model.po.MediaFiles;
  */
 public interface MediaFilesService extends IService<MediaFiles> {
 
+    List<String> getTags();
 }

@@ -21,8 +21,8 @@ public class PageParams {
     public PageParams() {
     }
 
-    public PageParams(Long pageNo, Long pageSize) {
-        this.pageNo = pageNo;
+    public PageParams(Long page, Long pageSize) {
+        this.pageNo = page;
         this.pageSize = pageSize;
     }
 }

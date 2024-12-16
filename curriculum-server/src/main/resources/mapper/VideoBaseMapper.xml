@@ -32,5 +32,8 @@
     <sql id="Base_Column_List">
         id, media_id, user_id, username, title, tags, video_type, grade, description, cover, timelength, start_time, parentid, style, create_date, change_date, thumbup_count, comment_count, playback_volume, member, audit_status, status
     </sql>
+    <select id="getAllVideoByTags" resultType="com.curriculum.model.po.VideoBase">
+        select * from video_base where tags like '%${tags}%'
+    </select>
 
 </mapper>

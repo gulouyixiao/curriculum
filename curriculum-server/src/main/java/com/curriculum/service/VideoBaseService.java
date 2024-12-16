@@ -2,6 +2,8 @@ package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.po.VideoBase;
+import com.curriculum.model.vo.PageResult;
+import com.curriculum.model.vo.VideoToMain;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.curriculum.model.po.VideoBase;
  */
 public interface VideoBaseService extends IService<VideoBase> {
 
+    PageResult<VideoToMain> getVideoBasePage(int page, int size, String tags);
 }
