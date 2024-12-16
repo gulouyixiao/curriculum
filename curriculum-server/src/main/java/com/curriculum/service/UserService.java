@@ -5,7 +5,6 @@ import com.curriculum.model.dto.UserLoginDTO;
 import com.curriculum.model.dto.UserRegisterDTO;
 import com.curriculum.model.po.User;
 import com.curriculum.model.vo.UserLoginVO;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 用户表 服务类

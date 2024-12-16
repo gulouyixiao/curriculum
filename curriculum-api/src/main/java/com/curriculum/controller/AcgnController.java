@@ -38,7 +38,7 @@ public class AcgnController {
         PageParams pageParams,
         @RequestParam(required = true) String startTime,
         @RequestParam(required = true) String cityName){
-        int page = Math.toIntExact(pageParams.getPageNo());
+        int page = Math.toIntExact(pageParams.getPage());
         int size = Math.toIntExact(pageParams.getPageSize());
         PageResult<Acgn> acgnPageByTimeAndCityName = acgnService.getAcgnPageByTimeAndCityName(page, size, startTime, cityName);
 

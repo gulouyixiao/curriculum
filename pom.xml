@@ -25,7 +25,7 @@
         <org.projectlombok.version>1.18.20</org.projectlombok.version>
         <google.guava.version>25.0-jre</google.guava.version>
         <jjwt>0.12.3</jjwt>
-        <minio.version>8.4.3</minio.version>
+        <minio.version>8.2.1</minio.version>
         <google.zxing.core.version>3.3.0</google.zxing.core.version>
         <google.zxing.javase.version>3.3.0</google.zxing.javase.version>
     </properties>

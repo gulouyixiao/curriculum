@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 /**
- * 用户
+ * 用户相关接口
  */
 @Slf4j
 @RestController
@@ -71,5 +71,6 @@ public class UserController {
         userService.register(userRegisterDTO);
         return RestResponse.success();
     }
+
 
 }

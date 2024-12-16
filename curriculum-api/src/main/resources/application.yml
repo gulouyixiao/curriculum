@@ -24,6 +24,14 @@ springfox:
 #  config: classpath:log4j2-dev.xml
 server:
   port: 10101
+minio:
+  endpoint:  http://127.0.0.1:9090 #Minio服务所在地址
+  accessKey: root #访问的key
+  secretKey: root123456 #访问的秘钥
+  bucket:
+    bucket_mediaFiles: lumediafiles
+    bucket_video: luvideo
+    bucket_image: luimage
 
 
 curriculum:

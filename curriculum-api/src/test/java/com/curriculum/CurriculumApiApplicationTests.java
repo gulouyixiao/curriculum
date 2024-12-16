@@ -30,6 +30,7 @@ class CurriculumApiApplicationTests {
 	@Autowired
 	MediaFilesService mediaFilesService;
 
+
 	@Test
 	void contextLoads() {
 		List<Dictionary> dictionaries = dictionaryService.queryAll();
