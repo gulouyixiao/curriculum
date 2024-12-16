@@ -2,6 +2,9 @@ package com.curriculum.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.curriculum.model.po.Acgn;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,4 +15,6 @@ import com.curriculum.model.po.Acgn;
  */
 public interface AcgnMapper extends BaseMapper<Acgn> {
 
+    List<Acgn> getAcgnPageByTimeAndCityName(@Param("startTime") String startTime,
+                                            @Param("cityName") String cityName);
 }
