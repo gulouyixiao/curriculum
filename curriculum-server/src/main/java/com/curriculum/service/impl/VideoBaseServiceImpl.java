@@ -34,10 +34,12 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 		//分离多个关键字
 		String tags = videoPageParams.getTags();
-		for (String s : tags.split(",")) {
-			queryWrapper.like(VideoBase::getTags,s);
-		}
+		if(tags != null && tags.isEmpty()){
+			for (String s : tags.split(",")) {
+				queryWrapper.like(VideoBase::getTags,s);
+			}
 
+		}
 		Page<VideoBase> ipage = new Page<>(videoPageParams.getPage(),videoPageParams.getPageSize());
 
 		Page<VideoBase> videoBasePage = videoBaseMapper.selectPage(ipage, queryWrapper);
