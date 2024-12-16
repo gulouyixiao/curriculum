@@ -38,7 +38,7 @@ public class VideoBase implements Serializable {
     /**
      * 用户名称
      */
-    private String userName;
+    private String username;
 
     /**
      * 标题

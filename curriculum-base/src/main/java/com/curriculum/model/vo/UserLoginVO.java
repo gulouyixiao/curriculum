@@ -20,10 +20,10 @@ public class UserLoginVO implements Serializable {
 	private Long id;
 
 	@ApiModelProperty("账号用户名")
-	private String userName;
+	private String username;
 
 	@ApiModelProperty("昵称")
-	private String nickName;
+	private String nickname;
 
 	@ApiModelProperty("jwt令牌")
 	private String token;

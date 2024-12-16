@@ -15,11 +15,13 @@ import com.curriculum.properties.JwtProperties;
 import com.curriculum.service.UserService;
 import com.curriculum.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		//验证码校验
 		picCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
 
-		String username = userLoginDTO.getUserName();
+		String username = userLoginDTO.getUsername();
 		String password = userLoginDTO.getPassword();
 
 		// 登录前置校验
@@ -80,8 +82,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 				claims);
 		UserLoginVO userLoginVO = UserLoginVO.builder()
 				.id(user.getId())
-				.userName(user.getUsername())
-				.nickName(user.getNickname())
+				.username(user.getUsername())
+				.nickname(user.getNickname())
 				.token(token)
 				.build();
 
@@ -95,7 +97,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 */
 	@Override
 	public void register(UserRegisterDTO userRegisterDTO) {
+		//前置校验
+		loginPreCheck(userRegisterDTO.getUsername(),userRegisterDTO.getPassword());
 
+		//todo 验证码验证 待完善
+		User user = new User();
+		BeanUtils.copyProperties(userRegisterDTO,user);
+		user.setStatus("1");
+		user.setCreateTime(LocalDateTime.now());
+		user.setGrade("1");
+		user.setUtype("205001");
+		this.save(user);
 	}
 
 	private User getByUserName(String username) {
@@ -106,7 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
 	/**
-	 * 登录前置校验
+	 * 前置校验
 	 * @param username 用户名
 	 * @param password 用户密码
 	 */

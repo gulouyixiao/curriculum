@@ -34,7 +34,7 @@ public class MediaFiles implements Serializable {
     /**
      * 用户名称
      */
-    private String userName;
+    private String username;
 
     /**
      * 文件名称

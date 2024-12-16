@@ -7,7 +7,7 @@
         <id column="id" property="id" />
         <result column="media_id" property="mediaId" />
         <result column="user_id" property="userId" />
-        <result column="user_name" property="userName" />
+        <result column="username" property="username" />
         <result column="title" property="title" />
         <result column="tags" property="tags" />
         <result column="video_type" property="videoType" />
@@ -30,7 +30,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, media_id, user_id, user_name, title, tags, video_type, grade, description, cover, timelength, start_time, parentid, style, create_date, change_date, thumbup_count, comment_count, playback_volume, member, audit_status, status
+        id, media_id, user_id, username, title, tags, video_type, grade, description, cover, timelength, start_time, parentid, style, create_date, change_date, thumbup_count, comment_count, playback_volume, member, audit_status, status
     </sql>
 
 </mapper>

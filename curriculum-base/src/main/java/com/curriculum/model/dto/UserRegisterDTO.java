@@ -12,13 +12,13 @@ import java.io.Serializable;
 public class UserRegisterDTO implements Serializable {
 
 	@ApiModelProperty("账号")
-	private String userName;
+	private String username;
 
 	@ApiModelProperty("密码")
 	private String password;
 
 	@ApiModelProperty("昵称")
-	private String nickName;
+	private String nickname;
 
 	@ApiModelProperty("邮箱")
 	private String email;
