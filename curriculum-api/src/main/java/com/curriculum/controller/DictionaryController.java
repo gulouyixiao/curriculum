@@ -15,15 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * <p>
- * 数据字典 前端控制器
- * </p>
- *
- * @author gulouyixiao
+ * 数据字典
  */
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/curriculum")
 @Api(tags = "数据字典")
 public class DictionaryController  {
 
