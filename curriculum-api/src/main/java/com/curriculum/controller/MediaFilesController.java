@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/mediaFiles")
+@RequestMapping("/api/c")
 @Api(tags = "媒资信息")
 public class MediaFilesController {
 
