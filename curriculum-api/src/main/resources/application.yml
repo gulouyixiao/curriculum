@@ -16,6 +16,20 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+#  mail:
+#    host: smtp.qq.com
+#    port: 465
+#    username: 369496090@qq.com
+#    password: porkexfxcjfnbiac  # 授权码
+#    default-encoding: utf-8
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          ssl.enable: true
+#          starttls.enable: false
+
+
 springfox:
   documentation:
     enabled: true

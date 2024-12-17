@@ -43,7 +43,6 @@ public class VideoBaseController {
         PageResult pageResult = videoBaseService.pageQuery(videoPageParams);
         return RestResponse.success(pageResult);
     }
-
 //    @Anonymous
 //    @PostMapping("page1")
 //    public RestResponse<PageResult> getVideoBasePage(

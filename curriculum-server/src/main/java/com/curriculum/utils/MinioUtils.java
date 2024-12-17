@@ -18,14 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @description:
- * @author: 哼唧兽
- * @date: 9999/9/21
- **/
 @Component
 @Slf4j
 public class MinioUtils {
@@ -44,7 +40,7 @@ public class MinioUtils {
             found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
             log.error("Minio异常 : {}", e.getMessage());
-            return null;
+            return false;
         }
         return found;
     }
@@ -102,12 +98,24 @@ public class MinioUtils {
      * @param multipartFile
      * @return
      */
-    public String upload(String bucketName,MultipartFile multipartFile) {
-        String fileName = multipartFile.getName();
+    public String upload(String bucketName, MultipartFile multipartFile) {
+        String originalFilename = multipartFile.getOriginalFilename();
+        String fileName = FileHashUtils.calculateFileHash(multipartFile) + originalFilename.substring(originalFilename.lastIndexOf("."));
+        System.out.println(1);
         if (!bucketExists(bucketName)) {
             makeBucket(bucketName);
         }
+
         try {
+            // 检查文件是否已经存在
+            boolean fileExists = checkFileIsExist(bucketName, fileName);
+            if (fileExists) {
+                // 如果文件已存在，直接返回文件的预览 URL
+                String fileUrl = preview(fileName, bucketName);
+                return fileUrl.substring(0, fileUrl.indexOf("?"));
+            }
+            System.out.println(2);
+            // 文件不存在，上传文件
             InputStream inputStream = multipartFile.getInputStream();
             PutObjectArgs objectArgs = PutObjectArgs.builder()
                     .bucket(bucketName)
@@ -115,9 +123,11 @@ public class MinioUtils {
                     .stream(inputStream, multipartFile.getSize(), -1)
                     .contentType(multipartFile.getContentType())
                     .build();
-            //文件名称相同会覆盖
+
             minioClient.putObject(objectArgs);
             inputStream.close();
+
+            // 上传后获取文件的预览 URL
             String fileUrl = preview(fileName, bucketName);
             return fileUrl.substring(0, fileUrl.indexOf("?"));
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
@@ -125,6 +135,7 @@ public class MinioUtils {
         }
         return null;
     }
+
 
     /**
      * 预览图片
@@ -222,4 +233,41 @@ public class MinioUtils {
         }
         return items;
     }
+
+    /**
+     * 创建当前天日期的文件夹
+     */
+    public String createFolder(String bucketName) {
+        // 获取当前日期
+        LocalDateTime now = LocalDateTime.now();
+        String month = String.valueOf(now.getMonth().getValue());
+        String day = String.valueOf(now.getDayOfMonth());
+        if (!bucketExists(bucketName)) {
+            makeBucket(bucketName);
+        }
+        if (!this.bucketExists(month)) {
+            makeBucket(month);
+        }
+        if (!this.bucketExists(day)) {
+            makeBucket(day);
+        }
+
+        return month + "/" + day; // 返回文件夹路径
+    }
+
+    /**
+    *文件已经存在
+     */
+
+    public Boolean checkFileIsExist(String bucketName, String objectName) {
+        try {
+            minioClient.statObject(
+                    StatObjectArgs.builder().bucket(bucketName).object(objectName).build()
+            );
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
 }

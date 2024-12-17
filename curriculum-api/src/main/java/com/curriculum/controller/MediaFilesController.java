@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/curriculum/")
+@RequestMapping("/api/curriculum")
 @Anonymous
 @Api(tags = "媒资信息")
 public class MediaFilesController {
@@ -38,11 +38,29 @@ public class MediaFilesController {
         return RestResponse.success(tags, "查询成功");
     }
 
+    // 上传文件测试用
     @PostMapping("/upload")
     public RestResponse<String> upload(@RequestParam(value = "file") MultipartFile file) {
         fileService.upload(file);
 
         return RestResponse.success("上传成功");
     }
+
+    @Anonymous
+    @PostMapping("uploadImage")
+    public RestResponse uploadImage(@RequestParam(value = "file") MultipartFile file) {
+        log.info("上传图片：{}", file);
+        String fileurl = fileService.uploadImage(file);
+        mediaFilesService.addImage(fileurl, fileurl.substring(fileurl.lastIndexOf("/") + 1), file.getOriginalFilename());
+        return RestResponse.success(fileurl,"上传成功");
+    }
+
+//    @Anonymous
+//    @PostMapping("/upload/{type}")
+//    public RestResponse<String> upload(@PathVariable String type, @RequestParam(value = "file") MultipartFile file) {
+//        log.info("上传文件：{}", file);
+//        String fileurl = fileService.upload(type,file);
+//        return RestResponse.success(fileurl,"上传成功");
+//    }
 
 }

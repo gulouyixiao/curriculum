@@ -19,4 +19,10 @@ public class FileServiceImpl implements FileService {
         minioUtil.upload("data",file);
         return file.getOriginalFilename();
     }
+
+    @Override
+    public String uploadImage(MultipartFile file) {
+        String filerul =  minioUtil.upload("luimage",file);
+        return filerul;
+    }
 }

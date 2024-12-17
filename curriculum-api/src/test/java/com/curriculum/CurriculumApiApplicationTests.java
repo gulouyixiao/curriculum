@@ -8,6 +8,7 @@ import com.curriculum.model.vo.CheckCodeResult;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.DictionaryService;
+import com.curriculum.service.MailService;
 import com.curriculum.service.MediaFilesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ class CurriculumApiApplicationTests {
 	@Autowired
 	MediaFilesService mediaFilesService;
 
+	@Autowired
+	MailService mailService;
 
 	@Test
 	void contextLoads() {
@@ -53,10 +56,8 @@ class CurriculumApiApplicationTests {
 
 	@Test
 	void getCode2() {
-		long page = 1;
-		long size = 10;
-		PageParams pageParams = new PageParams(page, size);
-		RestResponse<PageResult> videoBasePage = videoBaseService.getVideoBasePage(pageParams, "");
+
+		mailService.sendSimpleMail("k20040629@126.com","test","test");
 	}
 
 }
