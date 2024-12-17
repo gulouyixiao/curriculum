@@ -5,52 +5,46 @@ import com.curriculum.exception.CurriculumException;
 import com.curriculum.model.dto.CheckCodeParamsDto;
 import com.curriculum.model.vo.CheckCodeResult;
 import com.curriculum.service.CheckCodeService;
+import com.curriculum.service.UserCheckCodeService;
 import com.curriculum.utils.RedisCheckCodeStore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 
 /**
- * @description 验证码接口
+ * @description 用户验证码接口
  */
 @Slf4j
-public abstract class AbstractCheckCodeService implements CheckCodeService {
-	protected CheckCodeGenerator checkCodeGenerator;
+@Service
+public class UserCheckCodeServiceImpl implements UserCheckCodeService {
 
 	@Autowired
-	protected RedisCheckCodeStore redisCheckCodeStore;
+	private ApplicationContext applicationContext;
 
-	public abstract void init();
+	@Autowired
+	private RedisCheckCodeStore redisCheckCodeStore;
 
 
-	/**
-	 * @param checkCodeParamsDto 生成验证码参数
-	 * @param code_length        验证码长度
-	 * @param keyPrefix          key的前缀
-	 * @param expire             过期时间
-	 * @description 生成验证公用方法
-	 */
-	public GenerateResult generate(CheckCodeParamsDto checkCodeParamsDto, Integer code_length, String keyPrefix, Integer expire) {
-		//生成验证码
-		String code = checkCodeGenerator.generate(code_length);
-		log.debug("生成验证码:{}", code);
-		//生成一个key
-		String uuid = UUID.randomUUID().toString();
-		String key = keyPrefix + uuid.replaceAll("-", "");
+	public CheckCodeResult generate(CheckCodeParamsDto checkCodeParamsDto){
+		//获取验证码类型
+		String type = checkCodeParamsDto.getCheckCodeType();
+		String beanName = type + "_CheckCodeService";
+		//从spring容器取出指定类型的bean
+		CheckCodeService checkCodeService = applicationContext.getBean(beanName, CheckCodeService.class);
 
-		//存储验证码
-		redisCheckCodeStore.set(key, code, expire);
-		//返回验证码生成结果
-		GenerateResult generateResult = new GenerateResult();
-		generateResult.setKey(key);
-		generateResult.setCode(code);
-		return generateResult;
+		CheckCodeResult checkCodeResult = checkCodeService.execute(checkCodeParamsDto);
+
+		return checkCodeResult;
+
 	}
 
-	public abstract CheckCodeResult generate(CheckCodeParamsDto checkCodeParamsDto);
+
+
+
 
 	public void verify(String key, String code) {
 		if (StringUtils.isBlank(key) || StringUtils.isBlank(code)) {
@@ -74,5 +68,6 @@ public abstract class AbstractCheckCodeService implements CheckCodeService {
 		String key;
 		String code;
 	}
+
 
 }
