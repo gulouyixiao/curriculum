@@ -25,5 +25,8 @@
     <sql id="Base_Column_List">
         id, user_id, username, filename, file_type, tags, bucket, file_path, file_id, url, create_date, change_date, status, remark, file_size
     </sql>
+    <select id="getTags" resultType="java.lang.String">
+        select DISTINCT tags from media_files where tags is not null and tags!=''
+    </select>
 
 </mapper>
