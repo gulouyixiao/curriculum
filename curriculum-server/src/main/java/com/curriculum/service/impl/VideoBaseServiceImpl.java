@@ -7,7 +7,6 @@ import com.curriculum.mapper.VideoBaseMapper;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
-import com.curriculum.model.vo.VideoBaseVO;
 import com.curriculum.service.VideoBaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

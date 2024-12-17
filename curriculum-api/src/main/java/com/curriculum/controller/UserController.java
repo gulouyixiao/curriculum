@@ -1,10 +1,8 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
-import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.UserLoginDTO;
 import com.curriculum.model.dto.UserRegisterDTO;
-import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.vo.CheckCodeResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.model.vo.UserLoginVO;

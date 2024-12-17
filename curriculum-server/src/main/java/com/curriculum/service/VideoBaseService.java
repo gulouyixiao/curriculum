@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
-import com.curriculum.model.vo.VideoBaseVO;
 
-import java.util.List;
 
 /**
  * 视频
