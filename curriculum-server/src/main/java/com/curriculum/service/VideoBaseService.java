@@ -7,6 +7,7 @@ import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**

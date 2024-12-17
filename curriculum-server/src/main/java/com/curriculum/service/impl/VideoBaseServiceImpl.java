@@ -48,23 +48,4 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 		return new PageResult(videoBasePage.getRecords(),videoBasePage.getTotal(), videoPageParams.getPage(), videoPageParams.getPageSize());
 	}
-
-//    @Override
-//    public PageResult<VideoToMain> getVideoBasePage(int page, int size, String tags) {
-//        PageHelper.startPage(page, size);
-//        List<VideoBase> videoBaseList = videoBaseMapper.getAllVideoByTags(tags);
-//        videoBaseList.forEach(videoBase -> {
-//            log.info("videoBase:{}", videoBase);
-//        });
-//
-//        List<VideoToMain> collect = videoBaseList.stream()
-//                .map(videoBase -> {
-//                    VideoToMain videoToMain = new VideoToMain();
-//                    BeanUtils.copyProperties(videoBase, videoToMain);
-//                    return videoToMain;
-//                })
-//                .collect(Collectors.toList());
-//        PageResult<VideoToMain> videoToMainPageResult = new PageResult<>(collect, (long) collect.size(), page, size);
-//        return videoToMainPageResult;
-//    }
 }

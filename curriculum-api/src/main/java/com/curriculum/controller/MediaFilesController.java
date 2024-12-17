@@ -53,7 +53,6 @@ public class MediaFilesController {
         String fileurl = fileService.uploadImage(file);
         long fileSize = file.getSize();
 
-// 将字节转换为 KB
         double fileSizeKB = fileSize / 1024.0;
         mediaFilesService.addImage(fileurl,file.getName(), (long) fileSizeKB);
         return RestResponse.success(fileurl,"上传成功");

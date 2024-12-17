@@ -1,6 +1,5 @@
 package com.curriculum.controller;
 
-import com.alipay.api.domain.Video;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.MovieDto;
@@ -13,7 +12,6 @@ import com.curriculum.service.FileService;
 import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.VideoBaseService;
 import com.curriculum.service.VideoCommentsService;
-import com.curriculum.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -91,14 +89,17 @@ public class VideoBaseController {
                                @ModelAttribute MovieDto movieDto) {
         log.info("上传视频：{}", file);
         String fileurl = fileService.uploadVideo(file);
+        String id = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         long fileSize = file.getSize();
 
         double fileSizeKB = fileSize / 1024.0;
-        mediaFilesService.addImage(fileurl,file.getName(), (long) fileSizeKB);
-
-        Long id = videoBaseService.addVideo(type,movieDto,fileurl,file);
+        if (type.equals("001002"))
+            mediaFilesService.addMovie(fileurl,file.getName(),(long)fileSizeKB);
+        else if (type.equals("001003"))
+            mediaFilesService.addAnime(fileurl,file.getName(),(long)fileSizeKB, movieDto);
+        id = id.substring(0, id.indexOf("."));
         VideoVo videoVo = new VideoVo( id,fileurl);
-        return RestResponse.success(fileurl);
+        return RestResponse.success(videoVo,"上传成功");
     }
 
 }
