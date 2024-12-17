@@ -43,8 +43,11 @@ public class SmsCheckCodeServiceImpl implements CheckCodeService {
 		CheckCodeResult generate = CheckCodeUtils.generate(4, "checkcode:",false);
 		String key = generate.getKey();
 		String code = generate.getCaptcha();
+		//存储验证码
+		redisCheckCodeStore.set(key,code,300);
 		//向目标手机号发送短信
 		sendSmsCode(checkCodeParamsDto.getParam1(),code);
+
 
 		CheckCodeResult checkCodeResult = new CheckCodeResult();
 		checkCodeResult.setKey(key);

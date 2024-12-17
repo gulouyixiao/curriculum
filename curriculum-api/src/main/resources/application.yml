@@ -54,4 +54,3 @@ curriculum:
     user-ttl: 8640000000 # 设置jwt过期时间
     user-token-name:  token # 设置前端传递过来的令牌名称
 
-git

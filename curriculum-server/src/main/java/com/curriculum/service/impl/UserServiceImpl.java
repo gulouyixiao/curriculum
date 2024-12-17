@@ -14,6 +14,7 @@ import com.curriculum.model.vo.UserLoginVO;
 import com.curriculum.properties.JwtProperties;
 import com.curriculum.service.UserCheckCodeService;
 import com.curriculum.service.UserService;
+import com.curriculum.utils.CheckCodeUtils;
 import com.curriculum.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -101,7 +102,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		//前置校验
 		loginPreCheck(userRegisterDTO.getUsername(),userRegisterDTO.getPassword());
 
-		//todo 验证码验证 待完善
+		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
+
 		User user = new User();
 		BeanUtils.copyProperties(userRegisterDTO,user);
 		user.setStatus("1");

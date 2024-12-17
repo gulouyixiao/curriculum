@@ -42,10 +42,11 @@ public class UserCheckCodeServiceImpl implements UserCheckCodeService {
 
 	}
 
-
-
-
-
+	/**
+	 * 验证码效验
+	 * @param key
+	 * @param code
+	 */
 	public void verify(String key, String code) {
 		if (StringUtils.isBlank(key) || StringUtils.isBlank(code)) {
 			CurriculumException.cast(MessageConstant.CAPTCHA_NULL);
@@ -56,11 +57,11 @@ public class UserCheckCodeServiceImpl implements UserCheckCodeService {
 		}
 		// 验证用户提交的验证码与缓存中的验证码是否匹配（不区分大小写）
 		boolean result = code_l.equalsIgnoreCase(code);
-		if (result) {
-			//删除验证码
-			redisCheckCodeStore.remove(key);
-		} else
+		//删除验证码
+		redisCheckCodeStore.remove(key);
+		if (!result)
 			CurriculumException.cast(MessageConstant.CAPTCHA_ERROR);
+
 	}
 
 	@Data
