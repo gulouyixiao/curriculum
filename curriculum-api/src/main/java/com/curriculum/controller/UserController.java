@@ -28,20 +28,6 @@ public class UserController {
     @Autowired
     private UserService  userService;
 
-    @Resource(name = "PicCheckCodeService")
-    private CheckCodeService picCheckCodeService;
-    /**
-     * 获取验证码
-     * @param
-     * @return 返回验证码(重复接口)
-     */
-    @GetMapping("/pic")
-    @ApiOperation(value = "获取验证码")
-    @Anonymous
-    public RestResponse<CheckCodeResult> getCode() {
-        CheckCodeResult codeResult = picCheckCodeService.generate(null);
-        return RestResponse.success(codeResult);
-    }
 
     /**
      * 登录

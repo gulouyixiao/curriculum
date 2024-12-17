@@ -12,6 +12,7 @@ import com.curriculum.model.dto.UserRegisterDTO;
 import com.curriculum.model.po.User;
 import com.curriculum.model.vo.UserLoginVO;
 import com.curriculum.properties.JwtProperties;
+import com.curriculum.service.UserCheckCodeService;
 import com.curriculum.service.UserService;
 import com.curriculum.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 	@Autowired
-	private PicCheckCodeServiceImpl picCheckCodeService;
+	private UserCheckCodeService userCheckCodeService;
 	@Autowired
 	JwtProperties jwtProperties;
 	/**
@@ -47,7 +48,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 */
 	public UserLoginVO login(UserLoginDTO userLoginDTO){
 		//验证码校验
-		picCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
+		userCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
 
 		String username = userLoginDTO.getUsername();
 		String password = userLoginDTO.getPassword();
