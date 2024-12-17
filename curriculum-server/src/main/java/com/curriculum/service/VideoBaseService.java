@@ -1,8 +1,11 @@
 package com.curriculum.service;
 
+import com.alipay.api.domain.Video;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoBase;
+import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 
 
@@ -16,5 +19,7 @@ public interface VideoBaseService extends IService<VideoBase> {
 	 * @param videoPageParams
 	 * @return
 	 */
-	PageResult pageQuery(VideoPageParams videoPageParams);
+	PageResult<VideoBase> pageQuery(VideoPageParams videoPageParams);
+
+
 }

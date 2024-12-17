@@ -56,5 +56,4 @@ public class VideoComments implements Serializable {
      */
     private Long parentCommentId;
 
-
 }
