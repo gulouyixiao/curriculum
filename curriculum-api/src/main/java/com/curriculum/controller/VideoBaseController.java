@@ -1,18 +1,25 @@
 package com.curriculum.controller;
 
+import com.alipay.api.domain.Video;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.CommentsPageParams;
+import com.curriculum.model.dto.MovieDto;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
+import com.curriculum.model.vo.VideoVo;
+import com.curriculum.service.FileService;
+import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.VideoBaseService;
 import com.curriculum.service.VideoCommentsService;
+import com.curriculum.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 视频，番剧相关接口
@@ -28,6 +35,12 @@ public class VideoBaseController {
 
     @Autowired
     private VideoCommentsService videoCommentsService;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    private MediaFilesService mediaFilesService;
 
     /**
      * 分类分页查询
@@ -70,4 +83,22 @@ public class VideoBaseController {
         videoCommentsService.commentsPublish(videoComments);
         return RestResponse.success();
     }
+
+    @Anonymous
+    @PostMapping("/upload/{type}")
+    public RestResponse upload(@PathVariable String type,
+                               @RequestParam(value = "file") MultipartFile file,
+                               @ModelAttribute MovieDto movieDto) {
+        log.info("上传视频：{}", file);
+        String fileurl = fileService.uploadVideo(file);
+        long fileSize = file.getSize();
+
+        double fileSizeKB = fileSize / 1024.0;
+        mediaFilesService.addImage(fileurl,file.getName(), (long) fileSizeKB);
+
+        Long id = videoBaseService.addVideo(type,movieDto,fileurl,file);
+        VideoVo videoVo = new VideoVo( id,fileurl);
+        return RestResponse.success(fileurl);
+    }
+
 }

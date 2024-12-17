@@ -6,4 +6,6 @@ public interface FileService {
     String upload(MultipartFile file);
 
     String uploadImage(MultipartFile file);
+
+    String uploadVideo(MultipartFile file);
 }
