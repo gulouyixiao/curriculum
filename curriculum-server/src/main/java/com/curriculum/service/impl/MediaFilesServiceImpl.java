@@ -8,9 +8,12 @@ import com.curriculum.model.po.User;
 import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -35,17 +38,26 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     @Override
-    public void addImage(String fileurl, String fileId, String filename) {
+    public void addImage(String fileurl, String originName, long fileSize) {
         MediaFiles mediaFiles = new MediaFiles();
         User user = userService.getById(AuthenticationContext.getContext());
+        String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
 
-        mediaFiles.setUrl(fileurl);
-        //暂时文件id和fileid相同
-        mediaFiles.setFileId(fileId);
+        String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);
+        String fileId = fileName.substring(0, fileName.lastIndexOf("."));
         mediaFiles.setId(fileId);
-        mediaFiles.setFileType("图片");
-        mediaFiles.setFilename(filename);
+        mediaFiles.setUserId(user.getId());
+        mediaFiles.setFilename(originName);
         mediaFiles.setUsername(user.getUsername());
+        mediaFiles.setFileType("001001");
         mediaFiles.setBucket("luimage");
+        mediaFiles.setFilePath(filePath);
+        mediaFiles.setFileId(fileId);
+        mediaFiles.setUrl(fileurl);
+        mediaFiles.setStatus("1");
+        mediaFiles.setFileSize(fileSize);
+        mediaFiles.setChangeDate(LocalDateTime.now());
+        mediaFiles.setCreateDate(LocalDateTime.now());
+        mediaFilesMapper.insert(mediaFiles);
     }
 }

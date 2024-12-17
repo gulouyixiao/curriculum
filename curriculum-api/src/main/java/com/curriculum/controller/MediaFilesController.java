@@ -51,7 +51,11 @@ public class MediaFilesController {
     public RestResponse uploadImage(@RequestParam(value = "file") MultipartFile file) {
         log.info("上传图片：{}", file);
         String fileurl = fileService.uploadImage(file);
-        mediaFilesService.addImage(fileurl, fileurl.substring(fileurl.lastIndexOf("/") + 1), file.getOriginalFilename());
+        long fileSize = file.getSize();
+
+// 将字节转换为 KB
+        double fileSizeKB = fileSize / 1024.0;
+        mediaFilesService.addImage(fileurl,file.getName(), (long) fileSizeKB);
         return RestResponse.success(fileurl,"上传成功");
     }
 

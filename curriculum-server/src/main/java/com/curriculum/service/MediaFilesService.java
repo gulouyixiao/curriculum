@@ -17,5 +17,5 @@ public interface MediaFilesService extends IService<MediaFiles> {
 
     List<String> getTags();
 
-    void addImage(String fileurl, String fileId, String filename);
+    void addImage(String fileurl, String originName, long fileSize);
 }
