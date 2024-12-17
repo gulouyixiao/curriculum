@@ -58,7 +58,7 @@ public class PicCheckCodeServiceImpl implements CheckCodeService{
 	@Override
 	public CheckCodeResult execute(CheckCodeParamsDto checkCodeParamsDto) {
 		log.info("生成验证码");
-		CheckCodeResult generate = CheckCodeUtils.generate( 4, "checkcode:");
+		CheckCodeResult generate = CheckCodeUtils.generate( 4, "checkcode:",true);
 		String key = generate.getKey();
 		String code = generate.getCaptcha();
 		//存储验证码

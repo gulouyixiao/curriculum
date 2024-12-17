@@ -49,7 +49,6 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		return new PageResult(videoBasePage.getRecords(),videoBasePage.getTotal(), videoPageParams.getPage(), videoPageParams.getPageSize());
 	}
 
-    @Override
     public PageResult<VideoToMain> getVideoBasePage(int page, int size, String tags) {
         PageHelper.startPage(page, size);
         List<VideoBase> videoBaseList = videoBaseMapper.getAllVideoByTags(tags);

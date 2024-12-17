@@ -28,7 +28,7 @@ public class CheckCodeController {
 	 * @param
 	 * @return 返回验证码
 	 */
-	@PostMapping("/sms")
+	@PostMapping("/captcha")
 	@ApiOperation(value = "获取验证码")
 	@Anonymous
 	public RestResponse<CheckCodeResult> getCode(@RequestBody CheckCodeParamsDto checkCodeParamsDto) {
