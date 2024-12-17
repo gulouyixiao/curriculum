@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.mapper.VideoBaseMapper;
+import com.curriculum.mapper.VideoCommentsMapper;
+import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoBase;
+import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.VideoBaseVO;
 import com.curriculum.service.VideoBaseService;
@@ -23,13 +26,15 @@ import java.util.List;
 public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase> implements VideoBaseService {
 	@Autowired
 	private VideoBaseMapper videoBaseMapper;
+	@Autowired
+	private VideoCommentsMapper videoCommentsMapper;
 
 	/**
 	 * 视频条件分页查询
 	 * @param videoPageParams
 	 * @return
 	 */
-	public PageResult pageQuery(VideoPageParams videoPageParams){
+	public PageResult<VideoBase> pageQuery(VideoPageParams videoPageParams){
 		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
 
 		//分离多个关键字
@@ -45,4 +50,8 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 		return new PageResult(videoBasePage.getRecords(),videoBasePage.getTotal(), videoPageParams.getPage(), videoPageParams.getPageSize());
 	}
+
+
+
+
 }
