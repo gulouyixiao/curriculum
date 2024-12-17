@@ -25,5 +25,11 @@
     <sql id="Base_Column_List">
         id, title, tags, start_time, end_time, province_code, province_name, city_code, city_name, district_code, district_name, detail, price, vip_price, pic
     </sql>
+    <select id="getAcgnPageByTimeAndCityName" resultType="com.curriculum.model.po.Acgn">
+        select *
+        from acgn
+        where start_time >= #{startTime}
+          and city_name  like '%${cityName}%'
+    </select>
 
 </mapper>
