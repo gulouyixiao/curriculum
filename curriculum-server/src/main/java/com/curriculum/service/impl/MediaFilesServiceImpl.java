@@ -69,7 +69,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     @Override
-    public void addMovie(String fileurl, String originName, long fileSize) {
+    public void addMovie(String fileurl, String originName, long fileSize, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
         User user = userService.getById(AuthenticationContext.getContext());
         String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
@@ -89,6 +89,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         mediaFiles.setFileSize(fileSize);
         mediaFiles.setChangeDate(LocalDateTime.now());
         mediaFiles.setCreateDate(LocalDateTime.now());
+        mediaFiles.setTimelength(fileTime);
         mediaFilesMapper.insert(mediaFiles);
     }
 
@@ -113,6 +114,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         mediaFiles.setFileSize(fileSize);
         mediaFiles.setChangeDate(LocalDateTime.now());
         mediaFiles.setCreateDate(LocalDateTime.now());
+        mediaFiles.setTimelength(fileTime);
         mediaFilesMapper.insert(mediaFiles);
 
         videoBaseService.addAnime(movieDto, fileTime, mediaFiles);

@@ -113,6 +113,15 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		return this.list(queryWrapper);
 	}
 
+	@Override
+	public List<VideoBase> show(String videoType, int limit) {
+		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(VideoBase::getVideoType, videoType)
+				.orderByDesc(VideoBase::getPlaybackVolume)
+				.last("LIMIT " + limit);
+		return this.list(queryWrapper);
+	}
+
 	/**
 	 * 发布视频
 	 * @param videoPublishDto
@@ -135,9 +144,8 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		BeanUtils.copyProperties(videoPublishDto,videoBase);
 		videoBase.setParentid(null);
 		videoBase.setUserId(userId);
-
-		//todo 视频时长待完善
-		videoBase.setTimelength("00:20:20");
+		videoBase.setUrl(mediaFiles.getUrl());
+		videoBase.setTimelength(mediaFiles.getTimelength());
 		videoBase.setUsername(mediaFiles.getUsername());
 		videoBase.setStartTime(LocalDateTime.now());
 		videoBase.setCreateDate(LocalDateTime.now());

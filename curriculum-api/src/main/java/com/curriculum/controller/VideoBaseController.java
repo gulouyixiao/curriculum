@@ -1,11 +1,7 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
-import com.curriculum.model.dto.CommentsDTO;
-import com.curriculum.model.dto.CommentsPageParams;
-import com.curriculum.model.dto.MovieDto;
-import com.curriculum.model.dto.PageParams;
-import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.dto.*;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
@@ -112,7 +108,7 @@ public class VideoBaseController {
 
     /**
      * 上传视频
-     * @param file
+     * @param
      * @return
      */
     @PostMapping("/video/publish")
@@ -154,7 +150,7 @@ public class VideoBaseController {
 
         double fileSizeKB = fileSize / 1024.0;
         if (type.equals("001002")) {
-            mediaFilesService.addMovie(fileurl, file.getName(), (long) fileSizeKB);
+            mediaFilesService.addMovie(fileurl, file.getName(), (long) fileSizeKB, movietime);
             id = id.substring(0, id.indexOf("."));
         }
         else if (type.equals("001003")) {

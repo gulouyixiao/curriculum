@@ -98,5 +98,7 @@ public class MediaFiles implements Serializable {
      */
     private Long fileSize;
 
+    private String timelength;
+
 
 }
