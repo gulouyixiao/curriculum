@@ -11,6 +11,7 @@ import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.VideoToMain;
+import com.curriculum.model.vo.VideoVo;
 import com.curriculum.service.VideoBaseService;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,29 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 	}
 
 	/**
+	 * 获取播放量排名前五的列表
+	 * @param videoType 视频类型
+	 * @param limit 获取记录的限制数量
+	 * @return 播放量排名前x的信息列表
+	 */
+	@Override
+	public List<VideoBase> recommend(String videoType, int limit) {
+		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(VideoBase::getVideoType, videoType)
+				.orderByDesc(VideoBase::getPlaybackVolume)
+				.last("LIMIT " + limit);
+		return this.list(queryWrapper);
+	}
+
+	@Override
+	public List<VideoBase> show(String videoType, int limit) {
+		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(VideoBase::getVideoType, videoType)
+				.orderByDesc(VideoBase::getPlaybackVolume)
+				.last("LIMIT " + limit);
+		return this.list(queryWrapper);
+	}
+	/**
 	 * 添加番剧
 	 * @param movieDto
 	 * @param fileTime
@@ -93,5 +117,11 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		List<VideoBase> videoBases = videoBaseMapper.GroupByParentId();
 		PageResult pageResult = new PageResult(videoBases, videoBases.size(), 1, videoBases.size());
 		return pageResult;
+	}
+
+	@Override
+	public VideoBase videovie(int id) {
+		VideoBase list = videoBaseMapper.selectById(id);
+		return list;
 	}
 }

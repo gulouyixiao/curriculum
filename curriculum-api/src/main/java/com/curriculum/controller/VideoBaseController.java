@@ -4,9 +4,8 @@ import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.CommentsDTO;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.MovieDto;
-import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.VideoPageParams;
-import com.curriculum.model.po.VideoComments;
+import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.model.vo.VideoVo;
@@ -72,6 +71,14 @@ public class VideoBaseController {
         return RestResponse.success(videoBases);
     }
 
+    @Anonymous
+    @GetMapping("anime/show")
+    @ApiOperation(value = "番剧热播前五")
+    public RestResponse show() {
+        log.info("番剧热播前五");
+        List<VideoBase> videoBases = videoBaseService.show("001003",5);
+        return RestResponse.success(videoBases,"查询成功");
+    }
 
     /**
      * 获取视频或番剧的评论区
@@ -128,6 +135,15 @@ public class VideoBaseController {
         }
         VideoVo videoVo = new VideoVo( id,fileurl);
         return RestResponse.success(videoVo,"上传成功");
+    }
+
+    @Anonymous
+    @GetMapping("/videovie")
+    @ApiOperation(value = "视频播放")
+    public RestResponse videovie(@RequestParam int id) {
+        log.info("视频播放：{}", id);
+        VideoBase videoVo = videoBaseService.videovie(id);
+        return RestResponse.success(videoVo,"查询成功");
     }
 
 }
