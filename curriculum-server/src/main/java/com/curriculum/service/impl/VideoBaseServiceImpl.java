@@ -10,7 +10,6 @@ import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
-import com.curriculum.model.vo.VideoToMain;
 import com.curriculum.model.vo.VideoVo;
 import com.curriculum.service.VideoBaseService;
 import com.github.pagehelper.PageHelper;
@@ -108,6 +107,7 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		videoBase.setPlaybackVolume(0L);
 		videoBase.setAuditStatus("202001");
 		videoBase.setStatus("203001");
+		videoBase.setUrl(mediaFiles.getUrl());
 
 		videoBaseMapper.insert(videoBase);
 	}

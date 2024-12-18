@@ -13,6 +13,7 @@ import com.curriculum.service.FileService;
 import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.VideoBaseService;
 import com.curriculum.service.VideoCommentsService;
+import com.curriculum.utils.FileHashUtils;
 import com.curriculum.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -119,6 +120,10 @@ public class VideoBaseController {
                                @RequestParam(value = "file") MultipartFile file,
                                MovieDto movieDto) {
         log.info("上传视频：{}", file);
+        String md5 = FileHashUtils.calculateFileHash(file);
+        if (mediaFilesService.selectById(md5)) {
+            return RestResponse.validfail("图片已存在");
+        }
         String fileurl = fileService.uploadVideo(file);
         String id = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         long fileSize = file.getSize();

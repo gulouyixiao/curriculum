@@ -4,6 +4,7 @@ import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.FileService;
 import com.curriculum.service.MediaFilesService;
+import com.curriculum.utils.FileHashUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,10 @@ public class MediaFilesController {
     @ApiOperation(value = "上传图片")
     public RestResponse uploadImage(@RequestParam(value = "file") MultipartFile file) {
         log.info("上传图片：{}", file);
+        String md5 = FileHashUtils.calculateFileHash(file);
+        if (mediaFilesService.selectById(md5)) {
+            return RestResponse.validfail("图片已存在");
+        }
         String fileurl = fileService.uploadImage(file);
         long fileSize = file.getSize();
 

@@ -24,4 +24,6 @@ public interface MediaFilesService extends IService<MediaFiles> {
     void addMovie(String fileurl, String name, long fileSizeKB);
 
     void addAnime(String fileurl, String name, long fileSizeKB, MovieDto movieDto, String fileTime);
+
+    boolean selectById(String md5);
 }

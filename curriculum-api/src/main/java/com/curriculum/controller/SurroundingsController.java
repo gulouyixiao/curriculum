@@ -3,6 +3,7 @@ package com.curriculum.controller;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.dto.surroundingsDTO;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.SurroundingsService;
@@ -43,7 +44,7 @@ public class SurroundingsController {
     @Anonymous
     @PostMapping("page")
     @ApiOperation(value = "周边分页查询")
-    public RestResponse page(VideoPageParams VideoPageParams) {
+    public RestResponse page(surroundingsDTO VideoPageParams) {
         log.info("周边分页查询：{}", VideoPageParams);
         PageResult pageResult = surroundingsService.pageQuery(VideoPageParams);
         return RestResponse.success(pageResult, "查询成功");
