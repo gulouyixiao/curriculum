@@ -20,4 +20,5 @@ public interface VideoBaseMapper extends BaseMapper<VideoBase> {
 
     List<VideoBase> GroupByParentId();
 
+    List<String> getTags();
 }

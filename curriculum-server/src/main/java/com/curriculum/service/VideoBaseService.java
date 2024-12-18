@@ -65,4 +65,6 @@ public interface VideoBaseService extends IService<VideoBase> {
 	PageResult show();
 
 	VideoBase videovie(int id);
+
+    List<String> getTags();
 }

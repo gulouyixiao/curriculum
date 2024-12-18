@@ -297,4 +297,20 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		VideoBase list = videoBaseMapper.selectById(id);
 		return list;
 	}
+
+	@Override
+	public List<String> getTags() {
+		List<String> tags = videoBaseMapper.getTags();
+		Set<String> tt = new HashSet<>();
+		for (String tag : tags) {
+			// 分离每个标签字符串，并添加到 set 中以去重
+			String[] individualTags = tag.split(",");
+			for (String individualTag : individualTags) {
+				// 去除可能的空格
+				tt.add(individualTag.trim());
+			}
+		}
+		List<String> tags1 = new ArrayList<>(tt);
+		return tags1;
+	}
 }

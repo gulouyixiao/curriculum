@@ -34,12 +34,7 @@ public class MediaFilesController {
     @Autowired
     private FileService fileService;
 
-    @GetMapping("/tags")
-    @ApiOperation("获取关键字，标签")
-    public RestResponse<List<String>> getTags() {
-        List<String> tags = mediaFilesService.getTags();
-        return RestResponse.success(tags, "查询成功");
-    }
+
 
     // 上传文件测试用
     @PostMapping("/upload")

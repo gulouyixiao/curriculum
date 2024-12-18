@@ -59,6 +59,10 @@
             total_playback_volume DESC
         LIMIT 5
     </select>
+    <select id="getTags" resultType="java.lang.String">
+        SELECT DISTINCT tags
+        from video_base
+    </select>
 
 
 </mapper>

@@ -59,6 +59,17 @@ public class VideoBaseController {
     }
 
     /**
+     * 标签查询
+     */
+    @Anonymous
+    @GetMapping("/tags")
+    @ApiOperation("获取关键字，标签")
+    public RestResponse getTags() {
+        List<String> tags = videoBaseService.getTags();
+        return RestResponse.success(tags, "查询成功");
+    }
+
+    /**
      * 番剧图片轮播推荐
      * @return
      */

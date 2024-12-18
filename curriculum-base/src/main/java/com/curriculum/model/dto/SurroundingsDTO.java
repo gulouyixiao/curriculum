@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class surroundingsDTO {
+public class SurroundingsDTO {
     private int page;
     private int pageSize;
     private String tags;
