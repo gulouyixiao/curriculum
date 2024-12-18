@@ -5,6 +5,7 @@ import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.FileService;
 import com.curriculum.service.MediaFilesService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class MediaFilesController {
     private FileService fileService;
 
     @GetMapping("/tags")
+    @ApiOperation(value = "获取标签")
     public RestResponse<List<String>> getTags() {
         List<String> tags = mediaFilesService.getTags();
         return RestResponse.success(tags, "查询成功");
@@ -48,6 +50,7 @@ public class MediaFilesController {
 
     @Anonymous
     @PostMapping("uploadImage")
+    @ApiOperation(value = "上传图片")
     public RestResponse uploadImage(@RequestParam(value = "file") MultipartFile file) {
         log.info("上传图片：{}", file);
         String fileurl = fileService.uploadImage(file);

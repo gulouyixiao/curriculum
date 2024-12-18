@@ -16,6 +16,10 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 #  mail:
 #    host: smtp.qq.com
 #    port: 465
@@ -53,4 +57,3 @@ curriculum:
     user-secret-key: curriculum_distribution_user_Wjz6A69BhUE3StNqBb7gQsOIlCx3g= # 设置jwt签名加密时使用的秘钥
     user-ttl: 8640000000 # 设置jwt过期时间
     user-token-name:  token # 设置前端传递过来的令牌名称
-
