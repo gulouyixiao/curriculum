@@ -150,11 +150,11 @@ public class VideoBaseController {
 
         double fileSizeKB = fileSize / 1024.0;
         if (type.equals("001002")) {
-            mediaFilesService.addMovie(fileurl, file.getName(), (long) fileSizeKB, movietime);
+            mediaFilesService.addMovie(fileurl, file.getOriginalFilename(), (long) fileSizeKB, movietime);
             id = id.substring(0, id.indexOf("."));
         }
         else if (type.equals("001003")) {
-            mediaFilesService.addAnime(fileurl, file.getName(), (long) fileSizeKB, movieDto, movietime);
+            mediaFilesService.addAnime(fileurl, file.getOriginalFilename(), (long) fileSizeKB, movieDto, movietime);
             id = null;
         }
         VideoVo videoVo = new VideoVo( id,fileurl);

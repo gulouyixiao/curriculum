@@ -96,7 +96,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     @Override
     public void addAnime(String fileurl, String originName, long fileSize, MovieDto movieDto, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
-        User user = userService.getById(1);
+        User user = userService.getById(11);
         String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
 
         String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);

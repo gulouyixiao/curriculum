@@ -62,7 +62,7 @@ public class MediaFilesController {
         long fileSize = file.getSize();
 
         double fileSizeKB = fileSize / 1024.0;
-        mediaFilesService.addImage(fileurl,file.getName(), (long) fileSizeKB);
+        mediaFilesService.addImage(fileurl,file.getOriginalFilename(), (long) fileSizeKB);
         return RestResponse.success(fileurl,"上传成功");
     }
 
