@@ -3,6 +3,7 @@ package com.curriculum.controller;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.MovieDto;
+import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
@@ -12,6 +13,7 @@ import com.curriculum.service.FileService;
 import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.VideoBaseService;
 import com.curriculum.service.VideoCommentsService;
+import com.curriculum.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -82,22 +84,32 @@ public class VideoBaseController {
         return RestResponse.success();
     }
 
+    /**
+     * 上传视频
+     * @param file
+     * @return
+     */
     @Anonymous
     @PostMapping("/upload/{type}")
+    @ApiOperation(value = "上传视频")
     public RestResponse upload(@PathVariable String type,
                                @RequestParam(value = "file") MultipartFile file,
-                               @ModelAttribute MovieDto movieDto) {
+                               MovieDto movieDto) {
         log.info("上传视频：{}", file);
         String fileurl = fileService.uploadVideo(file);
         String id = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         long fileSize = file.getSize();
+        String movietime = FileUtils.getVideoTime(file);
 
         double fileSizeKB = fileSize / 1024.0;
-        if (type.equals("001002"))
-            mediaFilesService.addMovie(fileurl,file.getName(),(long)fileSizeKB);
-        else if (type.equals("001003"))
-            mediaFilesService.addAnime(fileurl,file.getName(),(long)fileSizeKB, movieDto);
-        id = id.substring(0, id.indexOf("."));
+        if (type.equals("001002")) {
+            mediaFilesService.addMovie(fileurl, file.getName(), (long) fileSizeKB);
+            id = id.substring(0, id.indexOf("."));
+        }
+        else if (type.equals("001003")) {
+            mediaFilesService.addAnime(fileurl, file.getName(), (long) fileSizeKB, movieDto, movietime);
+            id = null;
+        }
         VideoVo videoVo = new VideoVo( id,fileurl);
         return RestResponse.success(videoVo,"上传成功");
     }

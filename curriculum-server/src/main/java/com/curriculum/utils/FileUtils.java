@@ -49,12 +49,7 @@ public class FileUtils {
                 }
 
                 // 如果小时是00，则只返回分:秒格式
-                String noHour = "00";
-                if (noHour.equals(hr)) {
-                    length[1] = mi + ":" + se;
-                } else {
-                    length[1] = hr + ":" + mi + ":" + se;
-                }
+                length[1] = hr + ":" + mi + ":" + se;
 
                 // 删除临时文件
                 tempFile.delete();

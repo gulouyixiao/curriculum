@@ -57,7 +57,6 @@ class CurriculumApiApplicationTests {
 	@Test
 	void getCode2() {
 
-		mailService.sendSimpleMail("k20040629@126.com","test","test");
 	}
 
 }

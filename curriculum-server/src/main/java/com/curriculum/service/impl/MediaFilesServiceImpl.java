@@ -3,15 +3,18 @@ package com.curriculum.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.context.AuthenticationContext;
 import com.curriculum.mapper.MediaFilesMapper;
+import com.curriculum.mapper.VideoBaseMapper;
 import com.curriculum.model.dto.MovieDto;
 import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.User;
 import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.UserService;
+import com.curriculum.service.VideoBaseService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +36,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private VideoBaseService videoBaseService;
     @Override
     public List<String> getTags() {
         return mediaFilesMapper.getTags();
@@ -87,9 +93,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     @Override
-    public void addAnime(String fileurl, String originName, long fileSize, MovieDto movieDto) {
+    public void addAnime(String fileurl, String originName, long fileSize, MovieDto movieDto, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
-        User user = userService.getById(AuthenticationContext.getContext());
+        User user = userService.getById(1);
         String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
 
         String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);
@@ -108,5 +114,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         mediaFiles.setChangeDate(LocalDateTime.now());
         mediaFiles.setCreateDate(LocalDateTime.now());
         mediaFilesMapper.insert(mediaFiles);
+
+        videoBaseService.addAnime(movieDto, fileTime, mediaFiles);
     }
 }

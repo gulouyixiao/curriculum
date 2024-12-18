@@ -112,6 +112,17 @@ public class MinioUtils {
         String filePath = year + "/" + month + "/" + day + "/" + fileName;
 
         try {
+
+            if (!bucketExists(bucketName)) {
+                log.info("Bucket '{}' 不存在，正在创建...", bucketName);
+                boolean created = makeBucket(bucketName);
+                if (!created) {
+                    log.error("创建 Bucket '{}' 失败", bucketName);
+                    return null; // 如果创建桶失败，返回 null
+                }
+                log.info("Bucket '{}' 创建成功", bucketName);
+            }
+
             // 检查文件是否已经存在
             boolean fileExists = checkFileIsExist(bucketName, filePath);
             if (fileExists) {
