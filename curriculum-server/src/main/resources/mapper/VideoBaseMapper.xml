@@ -35,5 +35,29 @@
     <select id="getAllVideoByTags" resultType="com.curriculum.model.po.VideoBase">
         select * from video_base where tags like '%${tags}%'
     </select>
+    <select id="GroupByParentId" resultType="com.curriculum.model.po.VideoBase">
+        SELECT
+            parentid,
+            MAX(url) AS url,
+            MAX(username) AS username,
+            MAX(description) AS description,
+            MAX(title) AS title,
+            MAX(timelength) AS timelength,
+            MAX(tags) AS tags,
+            MAX(grade) AS grade,
+            SUM(thumbup_count) AS total_thumbup_count,
+            SUM(comment_count) AS total_comment_count,
+            SUM(playback_volume) AS total_playback_volume
+        FROM
+            video_base
+        WHERE
+            parentid IS NOT NULL
+        GROUP BY
+            parentid
+        ORDER BY
+            total_playback_volume DESC
+        LIMIT 5
+    </select>
+
 
 </mapper>

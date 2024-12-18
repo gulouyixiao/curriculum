@@ -1,6 +1,7 @@
 package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.curriculum.model.dto.CommentsDTO;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
@@ -20,5 +21,5 @@ public interface VideoCommentsService extends IService<VideoComments> {
 	 * 发表评论
 	 * @param videoComments
 	 */
-	void commentsPublish(VideoComments videoComments);
+	void commentsPublish(CommentsDTO commentsDTO);
 }
