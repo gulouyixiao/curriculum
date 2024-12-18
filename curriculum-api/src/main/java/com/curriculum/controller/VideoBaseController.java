@@ -1,7 +1,11 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
-import com.curriculum.model.dto.*;
+import com.curriculum.model.dto.CommentsDTO;
+import com.curriculum.model.dto.CommentsPageParams;
+import com.curriculum.model.dto.MovieDto;
+import com.curriculum.model.dto.PageParams;
+import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
@@ -11,6 +15,7 @@ import com.curriculum.service.FileService;
 import com.curriculum.service.MediaFilesService;
 import com.curriculum.service.VideoBaseService;
 import com.curriculum.service.VideoCommentsService;
+import com.curriculum.utils.FileHashUtils;
 import com.curriculum.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,6 +74,14 @@ public class VideoBaseController {
         return RestResponse.success(videoBases);
     }
 
+    @Anonymous
+    @GetMapping("anime/show")
+    @ApiOperation(value = "番剧热播前五")
+    public RestResponse show() {
+        log.info("番剧热播前五");
+        List<VideoBase> videoBases = videoBaseService.show("001003",5);
+        return RestResponse.success(videoBases,"查询成功");
+    }
 
     /**
      * 获取视频或番剧的评论区
@@ -98,8 +111,8 @@ public class VideoBaseController {
     }
 
     /**
-     * 发布视频
-     * @param
+     * 上传视频
+     * @param file
      * @return
      */
     @PostMapping("/video/publish")
@@ -130,6 +143,10 @@ public class VideoBaseController {
                                @RequestParam(value = "file") MultipartFile file,
                                MovieDto movieDto) {
         log.info("上传视频：{}", file);
+        String md5 = FileHashUtils.calculateFileHash(file);
+        if (mediaFilesService.selectById(md5)) {
+            return RestResponse.validfail("图片已存在");
+        }
         String fileurl = fileService.uploadVideo(file);
         String id = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         long fileSize = file.getSize();
@@ -146,6 +163,15 @@ public class VideoBaseController {
         }
         VideoVo videoVo = new VideoVo( id,fileurl);
         return RestResponse.success(videoVo,"上传成功");
+    }
+
+    @Anonymous
+    @GetMapping("/videovie")
+    @ApiOperation(value = "视频播放")
+    public RestResponse videovie(@RequestParam int id) {
+        log.info("视频播放：{}", id);
+        VideoBase videoVo = videoBaseService.videovie(id);
+        return RestResponse.success(videoVo,"查询成功");
     }
 
 }

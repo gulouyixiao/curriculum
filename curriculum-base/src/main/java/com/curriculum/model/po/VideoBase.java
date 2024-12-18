@@ -132,5 +132,9 @@ public class VideoBase implements Serializable {
      */
     private String status;
 
+    /**
+     * 视频路径
+     */
+    private String url;
 
 }

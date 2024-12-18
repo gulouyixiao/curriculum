@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.mapper.SurroundingsMapper;
 import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.dto.surroundingsDTO;
 import com.curriculum.model.po.Surroundings;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
@@ -28,7 +29,7 @@ public class SurroundingsServiceImpl extends ServiceImpl<SurroundingsMapper, Sur
      * @return
      */
     @Override
-    public PageResult pageQuery(VideoPageParams videoPageParams) {
+    public PageResult pageQuery(surroundingsDTO videoPageParams) {
         LambdaQueryWrapper<Surroundings> queryWrapper = new LambdaQueryWrapper<>();
         String tags = videoPageParams.getTags();
         for (String s : tags.split(",")) {

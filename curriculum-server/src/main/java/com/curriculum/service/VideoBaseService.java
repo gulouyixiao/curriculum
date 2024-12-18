@@ -10,6 +10,7 @@ import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
+import com.curriculum.model.vo.VideoVo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +37,7 @@ public interface VideoBaseService extends IService<VideoBase> {
 	 * @return 播放量排名前x的信息列表
 	 */
 	 List<VideoBase> recommend(String videoType, int limit);
+	List<VideoBase> show(String videoType, int limit);
 
 
 	void addAnime(MovieDto movieDto, String fileTime, MediaFiles mediaFiles);
@@ -55,4 +57,6 @@ public interface VideoBaseService extends IService<VideoBase> {
 
 
 	PageResult show();
+
+	VideoBase videovie(int id);
 }

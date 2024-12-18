@@ -16,7 +16,7 @@ import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
-import com.curriculum.model.vo.VideoToMain;
+import com.curriculum.model.vo.VideoVo;
 import com.curriculum.service.VideoBaseService;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +26,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * 视频番剧
+ * 视频
  */
 @Slf4j
 @Service
@@ -91,6 +92,8 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		videoBase.setPlaybackVolume(0L);
 		videoBase.setAuditStatus("202001");
 		videoBase.setStatus("203001");
+		videoBase.setUrl(mediaFiles.getUrl());
+
 		videoBaseMapper.insert(videoBase);
 	}
 
@@ -183,5 +186,11 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		List<VideoBase> videoBases = videoBaseMapper.GroupByParentId();
 		PageResult pageResult = new PageResult(videoBases, videoBases.size(), 1, videoBases.size());
 		return pageResult;
+	}
+
+	@Override
+	public VideoBase videovie(int id) {
+		VideoBase list = videoBaseMapper.selectById(id);
+		return list;
 	}
 }

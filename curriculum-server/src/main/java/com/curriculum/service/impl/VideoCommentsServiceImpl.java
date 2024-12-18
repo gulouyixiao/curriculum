@@ -68,7 +68,6 @@ public class VideoCommentsServiceImpl extends ServiceImpl<VideoCommentsMapper, V
 
 	/**
 	 * 发表评论
-	 * @param videoComments
 	 */
 	@Override
 	public void commentsPublish(CommentsDTO commentsDTO) {

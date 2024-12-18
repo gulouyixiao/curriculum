@@ -117,4 +117,14 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
         videoBaseService.addAnime(movieDto, fileTime, mediaFiles);
     }
+
+    @Override
+    public boolean selectById(String md5) {
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(md5);
+        if (mediaFiles == null)
+        {
+            return false;
+        }
+        return true;
+    }
 }
