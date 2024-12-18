@@ -59,25 +59,15 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 		Page<VideoBase> videoBasePage = videoBaseMapper.selectPage(ipage, queryWrapper);
 
-
 		return new PageResult(videoBasePage.getRecords(),videoBasePage.getTotal(), videoPageParams.getPage(), videoPageParams.getPageSize());
 	}
 
 	/**
-	 * 获取播放量排名前五的列表
-	 * @param videoType 视频类型
-	 * @param limit 获取记录的限制数量
-	 * @return 播放量排名前x的信息列表
+	 * 添加番剧
+	 * @param movieDto
+	 * @param fileTime
+	 * @param mediaFiles
 	 */
-	@Override
-	public List<VideoBase> recommend(String videoType, int limit) {
-		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(VideoBase::getVideoType, videoType)
-				.orderByDesc(VideoBase::getPlaybackVolume)
-				.last("LIMIT " + limit);
-		return this.list(queryWrapper);
-	}
-
 	@Override
 	public void addAnime(MovieDto movieDto, String fileTime, MediaFiles mediaFiles) {
 		VideoBase videoBase = new VideoBase();

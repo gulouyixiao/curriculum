@@ -54,8 +54,8 @@ public class VideoBaseController {
     @PostMapping("/page")
     @ApiOperation(value = "视频分类分页查询")
     @Anonymous
-    public RestResponse page(VideoPageParams videoPageParams) {
-        log.info("视频分类分页查询：{}", videoPageParams);
+    public RestResponse<PageResult> page(VideoPageParams videoPageParams) {
+        log.info("分类分页查询：{}", videoPageParams);
         PageResult pageResult = videoBaseService.PageQuery(videoPageParams);
         return RestResponse.success(pageResult);
     }
