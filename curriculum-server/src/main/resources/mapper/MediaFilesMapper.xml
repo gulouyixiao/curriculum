@@ -14,6 +14,7 @@
         <result column="file_path" property="filePath" />
         <result column="file_id" property="fileId" />
         <result column="url" property="url" />
+        <result column="timelength" property="timelength" />
         <result column="create_date" property="createDate" />
         <result column="change_date" property="changeDate" />
         <result column="status" property="status" />

@@ -26,6 +26,7 @@
         <result column="member" property="member" />
         <result column="audit_status" property="auditStatus" />
         <result column="status" property="status" />
+        <result column="url" property="url" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -58,5 +59,6 @@
             total_playback_volume DESC
         LIMIT 5
     </select>
+
 
 </mapper>

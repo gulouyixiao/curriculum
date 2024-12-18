@@ -48,7 +48,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     public void addImage(String fileurl, String originName, long fileSize) {
         MediaFiles mediaFiles = new MediaFiles();
         User user = userService.getById(AuthenticationContext.getContext());
-        String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
+        String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
 
         String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         String fileId = fileName.substring(0, fileName.lastIndexOf("."));
@@ -71,8 +71,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     @Override
     public void addMovie(String fileurl, String originName, long fileSize, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
-        User user = userService.getById(AuthenticationContext.getContext());
-        String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
+        Long userId = AuthenticationContext.getContext();
+        User user = userService.getById(userId);
+        String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
 
         String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         String fileId = fileName.substring(0, fileName.lastIndexOf("."));
@@ -97,7 +98,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     public void addAnime(String fileurl, String originName, long fileSize, MovieDto movieDto, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
         User user = userService.getById(AuthenticationContext.getContext());
-        String filePath = fileurl.replace("http://127.0.0.1:9090/", "");
+        String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
 
         String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         String fileId = fileName.substring(0, fileName.lastIndexOf("."));

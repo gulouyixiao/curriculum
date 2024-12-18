@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.mapper.SurroundingsMapper;
-import com.curriculum.model.dto.VideoPageParams;
-import com.curriculum.model.dto.surroundingsDTO;
+import com.curriculum.model.dto.SurroundingsDTO;
 import com.curriculum.model.po.Surroundings;
-import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.service.SurroundingsService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +27,14 @@ public class SurroundingsServiceImpl extends ServiceImpl<SurroundingsMapper, Sur
      * @return
      */
     @Override
-    public PageResult pageQuery(surroundingsDTO videoPageParams) {
+    public PageResult pageQuery(SurroundingsDTO videoPageParams) {
         LambdaQueryWrapper<Surroundings> queryWrapper = new LambdaQueryWrapper<>();
         String tags = videoPageParams.getTags();
-        for (String s : tags.split(",")) {
-            queryWrapper.like(Surroundings::getTags,s);
+
+        if(tags != null && !tags.isEmpty()){
+            for (String s : tags.split(",")) {
+                queryWrapper.like(Surroundings::getTags,s);
+            }
         }
 
         Page<Surroundings> ipage = new Page<>(videoPageParams.getPage(),videoPageParams.getPageSize());

@@ -1,9 +1,7 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
-import com.curriculum.model.dto.PageParams;
-import com.curriculum.model.dto.VideoPageParams;
-import com.curriculum.model.dto.surroundingsDTO;
+import com.curriculum.model.dto.SurroundingsDTO;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.SurroundingsService;
@@ -21,14 +19,14 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/curriculum/surroundings/")
+@RequestMapping("/api/curriculum/surroundings")
 public class SurroundingsController {
 
     @Autowired
     private SurroundingsService  surroundingsService;
 
     @Anonymous
-    @GetMapping("info/{id}")
+    @GetMapping("/info/{id}")
     @ApiOperation(value = "周边信息查询")
     public RestResponse info(@PathVariable Integer id) {
         log.info("周边信息查询：{}", id);
@@ -37,16 +35,16 @@ public class SurroundingsController {
 
     /**
      * 周边分页查询
-     * @param VideoPageParams
+     * @param surroundingsDTO
      * @return
      */
 
     @Anonymous
-    @PostMapping("page")
+    @PostMapping("/page")
     @ApiOperation(value = "周边分页查询")
-    public RestResponse page(surroundingsDTO VideoPageParams) {
-        log.info("周边分页查询：{}", VideoPageParams);
-        PageResult pageResult = surroundingsService.pageQuery(VideoPageParams);
+    public RestResponse page(@RequestBody SurroundingsDTO surroundingsDTO) {
+        log.info("周边分页查询：{}", surroundingsDTO);
+        PageResult pageResult = surroundingsService.pageQuery(surroundingsDTO);
         return RestResponse.success(pageResult, "查询成功");
     }
 }

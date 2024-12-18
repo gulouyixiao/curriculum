@@ -1,8 +1,7 @@
 package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.curriculum.model.dto.VideoPageParams;
-import com.curriculum.model.dto.surroundingsDTO;
+import com.curriculum.model.dto.SurroundingsDTO;
 import com.curriculum.model.po.Surroundings;
 import com.curriculum.model.vo.PageResult;
 
@@ -16,5 +15,5 @@ import com.curriculum.model.vo.PageResult;
  */
 public interface SurroundingsService extends IService<Surroundings> {
 
-    PageResult pageQuery(surroundingsDTO videoPageParams);
+    PageResult pageQuery(SurroundingsDTO videoPageParams);
 }

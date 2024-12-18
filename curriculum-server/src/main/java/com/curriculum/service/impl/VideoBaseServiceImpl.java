@@ -8,24 +8,27 @@ import com.curriculum.constant.MessageConstant;
 import com.curriculum.context.AuthenticationContext;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.MediaFilesMapper;
+import com.curriculum.mapper.VideoAuditMapper;
 import com.curriculum.mapper.VideoBaseMapper;
 import com.curriculum.model.dto.MovieDto;
+import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.VideoPageParams;
 import com.curriculum.model.dto.VideoPublishDto;
 import com.curriculum.model.po.MediaFiles;
-import com.curriculum.model.po.MediaFiles;
+import com.curriculum.model.po.VideoAudit;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
-import com.curriculum.model.vo.VideoVo;
+import com.curriculum.model.vo.VideoAuditVO;
 import com.curriculum.service.VideoBaseService;
-import com.github.pagehelper.PageHelper;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +42,9 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 	@Autowired
 	private MediaFilesMapper mediaFilesMapper;
+
+	@Autowired
+	private VideoAuditMapper videoAuditMapper;
 
 	/**
 	 * 视频条件分页查询
@@ -127,6 +133,7 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 	 * @param videoPublishDto
 	 */
 	@Override
+	@Transactional
 	public void videoPublish(VideoPublishDto videoPublishDto) {
 		//查找视频的媒资文件
 		MediaFiles mediaFiles = mediaFilesMapper.selectById(videoPublishDto.getMediaId());
@@ -150,8 +157,23 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		videoBase.setStartTime(LocalDateTime.now());
 		videoBase.setCreateDate(LocalDateTime.now());
 		videoBase.setGrade("1");
-		videoBase.setAuditStatus("202003");
+		videoBase.setAuditStatus("202002");
+		videoBase.setStatus("203002");
+		videoBase.setVideoType("001002");
 		this.save(videoBase);
+
+		//进入审核表
+		VideoAudit videoAudit = new VideoAudit();
+		videoAudit.setVideoId(videoBase.getId());
+		videoAudit.setAuditStatus("202003");
+
+		//todo 采用消息队列，进行审核 待完成
+		videoAudit.setAuditStatus("202002");
+		videoAudit.setId(1L);
+		videoAudit.setAuditMind("无");
+		videoAudit.setAuditDate(LocalDateTime.now());
+
+		videoAuditMapper.insert(videoAudit);
 	}
 
 
@@ -170,12 +192,86 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 				.set(VideoBase::getTags,videoPublishDto.getTags())
 				.set(VideoBase::getStyle,videoPublishDto.getStyle())
 				.set(VideoBase::getCover,videoPublishDto.getCover())
+				.set(VideoBase::getVideoType,"001003")
+				.set(VideoBase::getStatus,"203002")
+				.set(VideoBase::getAuditStatus,"202002")
 				.set(VideoBase::getDescription,videoPublishDto.getDescription());
 		this.update(updateWrapper);
 
 		VideoBase videoBase = new VideoBase();
 		BeanUtils.copyProperties(videoPublishDto,videoBase);
 		videoBase.setMediaId(null);
+
+		//进入审核表
+		VideoAudit videoAudit = new VideoAudit();
+		videoAudit.setVideoId(videoBase.getParentid());
+		videoAudit.setAuditStatus("202003");
+
+		//todo 采用消息队列，进行审核 待完成
+		videoAudit.setAuditStatus("202002");
+		videoAudit.setId(1L);
+		videoAudit.setAuditMind("无");
+		videoAudit.setAuditDate(LocalDateTime.now());
+
+		videoAuditMapper.insert(videoAudit);
+	}
+
+
+	/**
+	 * 我的投稿
+	 * @param pageParams
+	 * @return
+	 */
+	@Override
+	public PageResult<VideoAuditVO> submit(PageParams pageParams) {
+		//查找用户投稿视频
+		Long userId = AuthenticationContext.getContext();
+
+		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
+
+		queryWrapper
+				.select(VideoBase::getId,VideoBase::getVideoType,VideoBase::getTitle)
+				.inSql(VideoBase::getParentid, "SELECT DISTINCT parentid FROM video_base")
+				.or(wrapper -> wrapper.eq(VideoBase::getUserId, userId).isNull(VideoBase::getParentid));
+
+		Page<VideoBase> ipage = new Page<>(pageParams.getPage(),pageParams.getPageSize());
+		List<VideoBase> videoBaseList = videoBaseMapper.selectPage(ipage, queryWrapper).getRecords();
+		long total = videoBaseMapper.selectPage(ipage, queryWrapper).getTotal();
+
+		List videoAuditVOList = null;
+		if(videoBaseList != null && videoBaseList.size() > 0){
+			videoAuditVOList = new ArrayList();
+			Map<Long, VideoBase> videoMap = new HashMap<>();
+
+			Map<Long, VideoBase> newvideoMap = videoBaseList.stream()
+					.filter(s -> "001002".equals(s.getVideoType()))
+					.collect(Collectors.toMap(VideoBase::getId, s -> s, (o1, o2) -> o1));
+			if(newvideoMap != null)
+				videoMap.putAll(newvideoMap);
+
+			newvideoMap = videoBaseList.stream()
+					.filter(s -> "001003".equals(s.getVideoType()))
+					.collect(Collectors.toMap(VideoBase::getParentid, s -> s, (o1, o2) -> o1));
+			if(newvideoMap != null)
+				videoMap.putAll(newvideoMap);
+
+			//获取审核情况
+			if(videoMap != null && videoMap.size() > 0){
+				Set<Long> videoIds = videoMap.keySet();
+				LambdaQueryWrapper<VideoAudit> queryWrapper1 = new LambdaQueryWrapper<>();
+				queryWrapper1.in(VideoAudit::getVideoId,videoIds);
+				List<VideoAudit> videoAuditList = videoAuditMapper.selectList(queryWrapper1);
+				videoAuditVOList = videoAuditList.stream().map(s -> {
+					VideoAuditVO videoAuditVO = new VideoAuditVO();
+					BeanUtils.copyProperties(s, videoAuditVO);
+					//补全视频审核信息
+					VideoBase videoBase = videoMap.get(s.getVideoId());
+					videoAuditVO.setTitle(videoBase.getTitle());
+					return videoAuditVO;
+				}).collect(Collectors.toList());
+			}
+		}
+		return new PageResult<>(videoAuditVOList,total,pageParams.getPage(),pageParams.getPageSize());
 	}
 
 

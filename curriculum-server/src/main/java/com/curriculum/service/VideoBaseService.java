@@ -2,15 +2,14 @@ package com.curriculum.service;
 
 import com.alipay.api.domain.Video;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.curriculum.model.dto.CommentsPageParams;
-import com.curriculum.model.dto.MovieDto;
-import com.curriculum.model.dto.VideoPageParams;
-import com.curriculum.model.dto.VideoPublishDto;
+import com.curriculum.model.dto.*;
 import com.curriculum.model.po.MediaFiles;
+import com.curriculum.model.po.VideoAudit;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.VideoVo;
+import com.curriculum.model.vo.VideoAuditVO;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +53,13 @@ public interface VideoBaseService extends IService<VideoBase> {
 	 */
 	void animePublish(VideoPublishDto videoPublishDto);
 
+
+	/**
+	 * 我的投稿
+	 * @param pageParams
+	 * @return
+	 */
+	PageResult<VideoAuditVO> submit(PageParams pageParams);
 
 
 	PageResult show();

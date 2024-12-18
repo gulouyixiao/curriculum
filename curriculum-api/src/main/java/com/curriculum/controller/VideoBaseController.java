@@ -1,5 +1,6 @@
 package com.curriculum.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.*;
 import com.curriculum.model.po.VideoBase;
@@ -132,12 +133,32 @@ public class VideoBaseController {
         return RestResponse.success();
     }
 
+    /**
+     * 我的投稿
+     * @param
+     * @return
+     */
+    @GetMapping("/submit")
+    @ApiOperation(value = "我的投稿")
+    public RestResponse<PageResult> submit(PageParams pageParams) {
+        log.info("我的投稿：{}", pageParams);
+        PageResult auditList =  videoBaseService.submit(pageParams);
+        return RestResponse.success(auditList);
+    }
+
     @Anonymous
     @PostMapping("/upload/{type}")
-    @ApiOperation(value = "上传视频")
+    @ApiOperation(value = "上传视频番剧")
     public RestResponse upload(@PathVariable String type,
                                @RequestParam(value = "file") MultipartFile file,
-                               MovieDto movieDto) {
+                               @RequestParam(required = false) String grade,
+                               @RequestParam(required = false) Long parentid,
+                                @RequestParam(required = false) String title) {
+        log.info("上传视频：{}", file);
+        MovieDto movieDto = new MovieDto();
+        movieDto.setGrade(grade);
+        movieDto.setTitle(title);
+        movieDto.setParentId(parentid);
         log.info("上传视频：{}", file);
         String md5 = FileHashUtils.calculateFileHash(file);
         if (mediaFilesService.selectById(md5)) {
@@ -169,5 +190,7 @@ public class VideoBaseController {
         VideoBase videoVo = videoBaseService.videovie(id);
         return RestResponse.success(videoVo,"查询成功");
     }
+
+
 
 }

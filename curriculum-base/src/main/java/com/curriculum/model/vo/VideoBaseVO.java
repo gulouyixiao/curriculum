@@ -69,4 +69,5 @@ public class VideoBaseVO {
 	 */
 	private String style;
 
+	private String url;
 }

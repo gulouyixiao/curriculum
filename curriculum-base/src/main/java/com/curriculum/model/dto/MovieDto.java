@@ -8,6 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 public class MovieDto {
     private String grade;
-    private String parentId;
+    private Long parentId;
     private String title;
 }
