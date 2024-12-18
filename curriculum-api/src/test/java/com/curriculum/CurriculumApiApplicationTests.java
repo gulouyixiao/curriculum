@@ -43,11 +43,6 @@ class CurriculumApiApplicationTests {
 	}
 
 
-	@Test
-	void getCode() {
-		RestResponse<CheckCodeResult> code = userController.getCode();
-		System.out.println(code.getData());
-	}
 
 //	@Test
 //	void getCode2() {

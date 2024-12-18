@@ -9,6 +9,7 @@ import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.UserMapper;
 import com.curriculum.mapper.VideoBaseMapper;
 import com.curriculum.mapper.VideoCommentsMapper;
+import com.curriculum.model.dto.CommentsDTO;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.po.User;
 import com.curriculum.model.po.VideoBase;
@@ -70,15 +71,15 @@ public class VideoCommentsServiceImpl extends ServiceImpl<VideoCommentsMapper, V
 	 * @param videoComments
 	 */
 	@Override
-	public void commentsPublish(VideoComments videoComments) {
+	public void commentsPublish(CommentsDTO commentsDTO) {
 		//查找视频是否存在
-		VideoBase videoBase = videoBaseMapper.selectById(videoComments.getVideoId());
+		VideoBase videoBase = videoBaseMapper.selectById(commentsDTO.getVideoId());
 
 		//视频不存在、视频未发布、视频审核未通过
 		if(videoBase == null){
 			CurriculumException.cast(MessageConstant.VIDEO_NOT_FOUND);
 		}
-		if(!"203002".equals(videoBase.getStatus()) || "202002".equals(videoBase.getAuditStatus())){
+		if(!"203002".equals(videoBase.getStatus()) || !"202002".equals(videoBase.getAuditStatus())){
 			CurriculumException.cast(MessageConstant.VIDEO_STATUS_ERROR);
 		}
 
@@ -89,15 +90,19 @@ public class VideoCommentsServiceImpl extends ServiceImpl<VideoCommentsMapper, V
 			CurriculumException.cast(MessageConstant.ACCOUNT_ERROR);
 		}
 		//完善评论数据
+		VideoComments videoComments = new VideoComments();
+		videoComments.setVideoId(commentsDTO.getVideoId());
+		videoComments.setContent(commentsDTO.getContent());
 		videoComments.setUserId(userId);
 		videoComments.setUsername(user.getUsername());
 		videoComments.setCreateDate(LocalDateTime.now());
 
-		Long parentCommentId = videoComments.getParentCommentId();
+		Long parentCommentId = commentsDTO.getParentCommentId();
 		//1.发表直属该视频的评论
 		//2.发表评论下的评论
 		if(parentCommentId != null){
 			//查询父评论
+			videoComments.setParentCommentId(parentCommentId);
 			VideoComments parentComment = this.getById(parentCommentId);
 			if(parentComment == null){
 				CurriculumException.cast(MessageConstant.NETWORK_ERROR);

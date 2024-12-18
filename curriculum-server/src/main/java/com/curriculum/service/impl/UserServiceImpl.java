@@ -12,7 +12,9 @@ import com.curriculum.model.dto.UserRegisterDTO;
 import com.curriculum.model.po.User;
 import com.curriculum.model.vo.UserLoginVO;
 import com.curriculum.properties.JwtProperties;
+import com.curriculum.service.UserCheckCodeService;
 import com.curriculum.service.UserService;
+import com.curriculum.utils.CheckCodeUtils;
 import com.curriculum.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -37,7 +39,7 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 	@Autowired
-	private PicCheckCodeServiceImpl picCheckCodeService;
+	private UserCheckCodeService userCheckCodeService;
 	@Autowired
 	JwtProperties jwtProperties;
 	/**
@@ -47,7 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 */
 	public UserLoginVO login(UserLoginDTO userLoginDTO){
 		//验证码校验
-		picCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
+		userCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
 
 		String username = userLoginDTO.getUsername();
 		String password = userLoginDTO.getPassword();
@@ -100,7 +102,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		//前置校验
 		loginPreCheck(userRegisterDTO.getUsername(),userRegisterDTO.getPassword());
 
-		//todo 验证码验证 待完善
+		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
+
 		User user = new User();
 		BeanUtils.copyProperties(userRegisterDTO,user);
 		user.setStatus("1");

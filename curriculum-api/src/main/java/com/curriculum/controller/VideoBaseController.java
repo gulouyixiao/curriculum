@@ -1,11 +1,11 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
+import com.curriculum.model.dto.CommentsDTO;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.MovieDto;
 import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.VideoPageParams;
-import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -54,10 +53,23 @@ public class VideoBaseController {
     @PostMapping("/page")
     @ApiOperation(value = "视频分类分页查询")
     @Anonymous
-    public RestResponse page(VideoPageParams videoPageParams) {
-        log.info("视频分类分页查询：{}", videoPageParams);
-        PageResult pageResult = videoBaseService.pageQuery(videoPageParams);
+    public RestResponse<PageResult> page(VideoPageParams videoPageParams) {
+        log.info("分类分页查询：{}", videoPageParams);
+        PageResult pageResult = videoBaseService.PageQuery(videoPageParams);
         return RestResponse.success(pageResult);
+    }
+
+    /**
+     * 番剧图片轮播推荐
+     * @return
+     */
+    @GetMapping("/page")
+    @ApiOperation(value = "番剧图片轮播推荐")
+    @Anonymous
+    public RestResponse<List<VideoBase>> recommend() {
+        log.info("番剧图片轮播推荐");
+        List<VideoBase> videoBases = videoBaseService.recommend("001003",5);
+        return RestResponse.success(videoBases);
     }
 
 
@@ -82,9 +94,9 @@ public class VideoBaseController {
      */
     @PostMapping("/comments/publish")
     @ApiOperation(value = "发表评论")
-    public RestResponse commentsPublish(@RequestBody VideoComments videoComments) {
-        log.info("发表评论：{}", videoComments);
-        videoCommentsService.commentsPublish(videoComments);
+    public RestResponse commentsPublish(@RequestBody CommentsDTO commentsDTO) {
+        log.info("发表评论：{}", commentsDTO);
+        videoCommentsService.commentsPublish(commentsDTO);
         return RestResponse.success();
     }
 
@@ -118,12 +130,4 @@ public class VideoBaseController {
         return RestResponse.success(videoVo,"上传成功");
     }
 
-    @Anonymous
-    @GetMapping("anime/show")
-    @ApiOperation(value = "番剧热播前五")
-    public RestResponse show() {
-        log.info("番剧热播前五");
-        PageResult videoBases = videoBaseService.show();
-        return RestResponse.success(videoBases,"查询成功");
-    }
 }
