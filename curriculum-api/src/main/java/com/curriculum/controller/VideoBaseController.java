@@ -5,6 +5,7 @@ import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.MovieDto;
 import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
@@ -20,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Base64;
+import java.util.List;
 
 /**
  * 视频，番剧相关接口
@@ -114,4 +118,12 @@ public class VideoBaseController {
         return RestResponse.success(videoVo,"上传成功");
     }
 
+    @Anonymous
+    @GetMapping("anime/show")
+    @ApiOperation(value = "番剧热播前五")
+    public RestResponse show() {
+        log.info("番剧热播前五");
+        PageResult videoBases = videoBaseService.show();
+        return RestResponse.success(videoBases,"查询成功");
+    }
 }

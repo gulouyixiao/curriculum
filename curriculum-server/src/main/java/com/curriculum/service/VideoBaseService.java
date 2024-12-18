@@ -11,6 +11,8 @@ import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 /**
  * 视频
@@ -26,4 +28,6 @@ public interface VideoBaseService extends IService<VideoBase> {
 
 
 	void addAnime(MovieDto movieDto, String fileTime, MediaFiles mediaFiles);
+
+	PageResult show();
 }

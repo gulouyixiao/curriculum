@@ -78,4 +78,11 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 		videoBaseMapper.insert(videoBase);
 	}
+
+	@Override
+	public PageResult show() {
+		List<VideoBase> videoBases = videoBaseMapper.GroupByParentId();
+		PageResult pageResult = new PageResult(videoBases, videoBases.size(), 1, videoBases.size());
+		return pageResult;
+	}
 }
