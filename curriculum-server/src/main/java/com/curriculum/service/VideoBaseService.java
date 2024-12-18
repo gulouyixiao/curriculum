@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.dto.CommentsPageParams;
 import com.curriculum.model.dto.MovieDto;
 import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.dto.VideoPublishDto;
 import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -37,6 +39,20 @@ public interface VideoBaseService extends IService<VideoBase> {
 
 
 	void addAnime(MovieDto movieDto, String fileTime, MediaFiles mediaFiles);
+	/**
+	 * 发布视频
+	 * @param videoPublishDto
+	 */
+	void videoPublish(VideoPublishDto videoPublishDto);
+
+
+	/**
+	 * 发布番剧
+	 * @param videoPublishDto
+	 */
+	void animePublish(VideoPublishDto videoPublishDto);
+
+
 
 	PageResult show();
 }

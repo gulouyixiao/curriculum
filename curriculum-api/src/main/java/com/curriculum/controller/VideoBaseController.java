@@ -1,11 +1,7 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
-import com.curriculum.model.dto.CommentsDTO;
-import com.curriculum.model.dto.CommentsPageParams;
-import com.curriculum.model.dto.MovieDto;
-import com.curriculum.model.dto.PageParams;
-import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.dto.*;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
@@ -102,10 +98,31 @@ public class VideoBaseController {
     }
 
     /**
-     * 上传视频
-     * @param file
+     * 发布视频
+     * @param
      * @return
      */
+    @PostMapping("/video/publish")
+    @ApiOperation(value = "发布视频")
+    public RestResponse videoPublish(@RequestBody VideoPublishDto videoPublishDto) {
+        log.info("发布视频：{}", videoPublishDto);
+        videoBaseService.videoPublish(videoPublishDto);
+        return RestResponse.success();
+    }
+
+    /**
+     * 发布番剧
+     * @param
+     * @return
+     */
+    @PostMapping("/anime/publish")
+    @ApiOperation(value = "发布番剧")
+    public RestResponse animePublish(@RequestBody VideoPublishDto videoPublishDto) {
+        log.info("发布番剧：{}", videoPublishDto);
+        videoBaseService.animePublish(videoPublishDto);
+        return RestResponse.success();
+    }
+
     @Anonymous
     @PostMapping("/upload/{type}")
     @ApiOperation(value = "上传视频")

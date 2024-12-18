@@ -1,12 +1,18 @@
 package com.curriculum.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.curriculum.constant.MessageConstant;
+import com.curriculum.context.AuthenticationContext;
 import com.curriculum.exception.CurriculumException;
+import com.curriculum.mapper.MediaFilesMapper;
 import com.curriculum.mapper.VideoBaseMapper;
 import com.curriculum.model.dto.MovieDto;
 import com.curriculum.model.dto.VideoPageParams;
+import com.curriculum.model.dto.VideoPublishDto;
+import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.MediaFiles;
 import com.curriculum.model.po.VideoBase;
 import com.curriculum.model.vo.PageResult;
@@ -20,16 +26,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * 视频
+ * 视频番剧
  */
 @Slf4j
 @Service
 public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase> implements VideoBaseService {
 	@Autowired
 	private VideoBaseMapper videoBaseMapper;
+
+	@Autowired
+	private MediaFilesMapper mediaFilesMapper;
 
 	/**
 	 * 视频条件分页查询
@@ -84,6 +92,79 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		videoBase.setAuditStatus("202001");
 		videoBase.setStatus("203001");
 		videoBaseMapper.insert(videoBase);
+	}
+
+
+	/**
+	 * 获取播放量排名前五的列表
+	 * @param videoType 视频类型
+	 * @param limit 获取记录的限制数量
+	 * @return 播放量排名前x的信息列表
+	 */
+	@Override
+	public List<VideoBase> recommend(String videoType, int limit) {
+		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(VideoBase::getVideoType, videoType)
+				.orderByDesc(VideoBase::getPlaybackVolume)
+				.last("LIMIT " + limit);
+		return this.list(queryWrapper);
+	}
+
+	/**
+	 * 发布视频
+	 * @param videoPublishDto
+	 */
+	@Override
+	public void videoPublish(VideoPublishDto videoPublishDto) {
+		//查找视频的媒资文件
+		MediaFiles mediaFiles = mediaFilesMapper.selectById(videoPublishDto.getMediaId());
+		if(mediaFiles == null){
+			CurriculumException.cast(MessageConstant.VIDEO_NOT_FOUND);
+		}
+		Long userId = AuthenticationContext.getContext();
+		if(mediaFiles.getUserId() != userId){
+			//视频发布与媒资上传者不是同一人
+			CurriculumException.cast(MessageConstant.PERMISSION_DENIED);
+		}
+
+		//发布视频
+		VideoBase videoBase = new VideoBase();
+		BeanUtils.copyProperties(videoPublishDto,videoBase);
+		videoBase.setParentid(null);
+		videoBase.setUserId(userId);
+
+		//todo 视频时长待完善
+		videoBase.setTimelength("00:20:20");
+		videoBase.setUsername(mediaFiles.getUsername());
+		videoBase.setStartTime(LocalDateTime.now());
+		videoBase.setCreateDate(LocalDateTime.now());
+		videoBase.setGrade("1");
+		videoBase.setAuditStatus("202003");
+		this.save(videoBase);
+	}
+
+
+
+
+	/**
+	 * 发布番剧
+	 * @param videoPublishDto
+	 */
+	@Override
+	public void animePublish(VideoPublishDto videoPublishDto) {
+		//补全该番剧信息,正常可能每个都有各自的信息，这里不管了
+		LambdaUpdateWrapper<VideoBase> updateWrapper = new LambdaUpdateWrapper<>();
+		updateWrapper.eq(VideoBase::getParentid,videoPublishDto.getParentid())
+				.set(VideoBase::getTitle,videoPublishDto.getTitle())
+				.set(VideoBase::getTags,videoPublishDto.getTags())
+				.set(VideoBase::getStyle,videoPublishDto.getStyle())
+				.set(VideoBase::getCover,videoPublishDto.getCover())
+				.set(VideoBase::getDescription,videoPublishDto.getDescription());
+		this.update(updateWrapper);
+
+		VideoBase videoBase = new VideoBase();
+		BeanUtils.copyProperties(videoPublishDto,videoBase);
+		videoBase.setMediaId(null);
 	}
 
 

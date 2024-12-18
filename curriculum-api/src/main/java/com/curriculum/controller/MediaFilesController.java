@@ -34,7 +34,7 @@ public class MediaFilesController {
     private FileService fileService;
 
     @GetMapping("/tags")
-    @ApiOperation(value = "获取标签")
+    @ApiOperation("获取关键字，标签")
     public RestResponse<List<String>> getTags() {
         List<String> tags = mediaFilesService.getTags();
         return RestResponse.success(tags, "查询成功");
@@ -60,6 +60,8 @@ public class MediaFilesController {
         mediaFilesService.addImage(fileurl,file.getName(), (long) fileSizeKB);
         return RestResponse.success(fileurl,"上传成功");
     }
+
+
 
 //    @Anonymous
 //    @PostMapping("/upload/{type}")
