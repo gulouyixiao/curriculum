@@ -104,11 +104,10 @@ public class MinioUtils {
         String fileName = FileHashUtils.calculateFileHash(multipartFile) + originalFilename.substring(originalFilename.lastIndexOf("."));
 
         Date date = new Date();
-        int year = date.getYear() + 1900;  // 获取年份（需要加上1900，因为Date的getYear()返回的年份是从1900年开始的）
-        String month = String.format("%02d", date.getMonth() + 1); // 月份从0开始，所以要加1，并格式化为两位数
-        String day = String.format("%02d", date.getDate()); // 获取日期，并格式化为两位数
+        int year = date.getYear() + 1900;
+        String month = String.format("%02d", date.getMonth() + 1);
+        String day = String.format("%02d", date.getDate());
 
-        // 使用年、月、日来构建文件路径
         String filePath = year + "/" + month + "/" + day + "/" + fileName;
 
         try {
@@ -121,14 +120,6 @@ public class MinioUtils {
                     return null; // 如果创建桶失败，返回 null
                 }
                 log.info("Bucket '{}' 创建成功", bucketName);
-            }
-
-            // 检查文件是否已经存在
-            boolean fileExists = checkFileIsExist(bucketName, filePath);
-            if (fileExists) {
-                // 如果文件已存在，直接返回文件的预览 URL
-                String fileUrl = preview(filePath, bucketName);
-                return fileUrl.substring(0, fileUrl.indexOf("?"));
             }
 
             // 文件不存在，上传文件
@@ -144,8 +135,8 @@ public class MinioUtils {
             inputStream.close();
 
             // 上传后获取文件的预览 URL
-            String fileUrl = preview(filePath, bucketName);
-            return fileUrl.substring(0, fileUrl.indexOf("?"));
+
+            return bucketName + "/" + filePath;
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
             log.error("Minio文件上传异常 : {}", e.getMessage());
         }

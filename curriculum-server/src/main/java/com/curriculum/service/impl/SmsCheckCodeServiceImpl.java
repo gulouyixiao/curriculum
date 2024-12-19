@@ -6,6 +6,7 @@ import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponseBody;
 import com.aliyun.teautil.models.RuntimeOptions;
+import com.curriculum.constant.MessageConstant;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.model.dto.CheckCodeParamsDto;
 import com.curriculum.model.vo.CheckCodeResult;
@@ -40,6 +41,9 @@ public class SmsCheckCodeServiceImpl implements CheckCodeService {
 	private RedisCheckCodeStore redisCheckCodeStore;
 	@Override
 	public CheckCodeResult execute(CheckCodeParamsDto checkCodeParamsDto) {
+		if("sms".equals(checkCodeParamsDto.getCheckCodeType()) && checkCodeParamsDto.getParam1() == null){
+			CurriculumException.cast(MessageConstant.REQUEST_NULL);
+		}
 		CheckCodeResult generate = CheckCodeUtils.generate(4, "checkcode:",false);
 		String key = generate.getKey();
 		String code = generate.getCaptcha();

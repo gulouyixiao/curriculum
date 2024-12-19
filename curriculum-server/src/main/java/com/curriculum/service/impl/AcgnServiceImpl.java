@@ -3,6 +3,7 @@ package com.curriculum.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.curriculum.constant.MessageConstant;
 import com.curriculum.mapper.AcgnMapper;
 import com.curriculum.model.po.Acgn;
 import com.curriculum.model.vo.PageResult;
@@ -33,10 +34,10 @@ public class AcgnServiceImpl extends ServiceImpl<AcgnMapper, Acgn> implements Ac
 
         LocalDateTime dateTime = LocalDateTime.now();
 
-        if("一周内".equals(startTime)){
-            dateTime = dateTime.plusYears(7);
-        }else if ("一个月内".equals(startTime)){
-            dateTime = dateTime.plusYears(30);
+        if(MessageConstant.TIME_WEEK.equals(startTime)){
+            dateTime = dateTime.plusDays(7);
+        }else if (MessageConstant.TIME_MONTH.equals(startTime)){
+            dateTime = dateTime.plusDays(30);
         }
 
         LambdaQueryWrapper<Acgn> queryWrapper = new LambdaQueryWrapper<>();

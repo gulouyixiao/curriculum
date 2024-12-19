@@ -28,7 +28,7 @@ public class PayRecord implements Serializable {
     /**
      * 支付交易号
      */
-    private Long payNo;
+    private String payNo;
 
     /**
      * 第三方支付交易流水号
@@ -79,7 +79,7 @@ public class PayRecord implements Serializable {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
 
 
 }

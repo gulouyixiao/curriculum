@@ -99,6 +99,12 @@ CREATE TABLE `video_comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='视频评论';
 
 
+
+
+
+
+
+
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
@@ -180,7 +186,7 @@ DROP TABLE IF EXISTS `pay_record`;
 
 CREATE TABLE `pay_record` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `pay_no` bigint NOT NULL COMMENT '支付交易号',
+  `pay_no`varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '支付交易号',
   `out_pay_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '第三方支付交易流水号',
   `out_pay_channel` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '第三方支付渠道编号',
   `order_id` bigint NOT NULL COMMENT '商品订单号',

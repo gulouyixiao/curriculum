@@ -9,18 +9,16 @@ spring:
     username: root
     password: 123456
     druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      time-between-eviction-runs-millis: 60000 # 每 60 秒检查一次空闲连接
-      min-evictable-idle-time-millis: 300000 # 最小空闲时间：5 分钟
-      test-while-idle: true # 空闲时测试连接有效性
-      validation-query: SELECT 1 # 用于检测连接的 SQL 语句
+      min-evictable-idle-time-millis: 300000 # 默认300秒，可以适当延长
+      time-between-eviction-runs-millis: 60000 # 默认60秒
+      test-while-idle: true # 在连接空闲时验证连接是否可用
+      validation-query: SELECT 1 # 用于测试连接有效性的 SQL 语句
   redis:
     host: localhost
     port: 6379
     password: 123456
     database: 10
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

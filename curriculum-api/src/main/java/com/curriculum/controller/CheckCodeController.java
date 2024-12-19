@@ -8,6 +8,7 @@ import com.curriculum.service.CheckCodeService;
 import com.curriculum.service.UserCheckCodeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
 @Api(tags = "验证码服务接口")
 @RestController
 @RequestMapping("/api/curriculum")
+@Slf4j
 public class CheckCodeController {
 
 	@Autowired
@@ -32,6 +34,7 @@ public class CheckCodeController {
 	@ApiOperation(value = "获取验证码")
 	@Anonymous
 	public RestResponse<CheckCodeResult> getCode(@RequestBody CheckCodeParamsDto checkCodeParamsDto) {
+		log.info("获取验证码：{}",checkCodeParamsDto);
 		CheckCodeResult codeResult = userCheckCodeService.generate(checkCodeParamsDto);
 		return RestResponse.success(codeResult);
 	}

@@ -5,6 +5,7 @@ import com.curriculum.model.dto.SurroundingsDTO;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.SurroundingsService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/curriculum/surroundings")
+@Api(tags = "周边相关接口")
 public class SurroundingsController {
 
     @Autowired

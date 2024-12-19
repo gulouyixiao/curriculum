@@ -50,10 +50,10 @@ public class VideoBaseController {
      * @return
      */
     @PostMapping("/page")
-    @ApiOperation(value = "视频分类分页查询")
+    @ApiOperation(value = "视频番剧分类分页查询")
     @Anonymous
-    public RestResponse<PageResult> page(VideoPageParams videoPageParams) {
-        log.info("分类分页查询：{}", videoPageParams);
+    public RestResponse<PageResult> page(@RequestBody VideoPageParams videoPageParams) {
+        log.info("分类番剧分页查询：{}", videoPageParams);
         PageResult pageResult = videoBaseService.PageQuery(videoPageParams);
         return RestResponse.success(pageResult);
     }
@@ -73,7 +73,7 @@ public class VideoBaseController {
      * 番剧图片轮播推荐
      * @return
      */
-    @GetMapping("/page")
+    @GetMapping("/anime/recommend")
     @ApiOperation(value = "番剧图片轮播推荐")
     @Anonymous
     public RestResponse<List<VideoBase>> recommend() {
@@ -153,6 +153,12 @@ public class VideoBaseController {
     @ApiOperation(value = "我的投稿")
     public RestResponse<PageResult> submit(PageParams pageParams) {
         log.info("我的投稿：{}", pageParams);
+        if(pageParams.getPage() == null){
+            pageParams.setPage(1L);
+        }
+        if(pageParams.getPageSize() == null){
+            pageParams.setPageSize(10L);
+        }
         PageResult auditList =  videoBaseService.submit(pageParams);
         return RestResponse.success(auditList);
     }
@@ -184,6 +190,7 @@ public class VideoBaseController {
         if (type.equals("001002")) {
             mediaFilesService.addMovie(fileurl, file.getOriginalFilename(), (long) fileSizeKB, movietime);
             id = id.substring(0, id.indexOf("."));
+            log.info("视频插入数据库：{}", file);
         }
         else if (type.equals("001003")) {
             mediaFilesService.addAnime(fileurl, file.getOriginalFilename(), (long) fileSizeKB, movieDto, movietime);

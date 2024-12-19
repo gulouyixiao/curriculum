@@ -57,10 +57,11 @@ public class UserCheckCodeServiceImpl implements UserCheckCodeService {
 		}
 		// 验证用户提交的验证码与缓存中的验证码是否匹配（不区分大小写）
 		boolean result = code_l.equalsIgnoreCase(code);
-		//删除验证码
-		redisCheckCodeStore.remove(key);
-		if (!result)
+		if (result){
 			CurriculumException.cast(MessageConstant.CAPTCHA_ERROR);
+			//删除验证码
+			redisCheckCodeStore.remove(key);
+		}
 
 	}
 

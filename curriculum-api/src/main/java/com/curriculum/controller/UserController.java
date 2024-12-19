@@ -21,7 +21,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/curricuclum")
+@RequestMapping("/api/curriculum")
 @Api(tags = "用户")
 public class UserController {
 

@@ -37,7 +37,7 @@ public class AcgnController {
 
     @ApiOperation(value = "根据时间和城市名获取漫展演出表")
     @PostMapping("/page")
-    public RestResponse<PageResult> getAcgnPageByTimeAndCityName(PageParams pageParams, @RequestParam(required = false) String startTime, @RequestParam(required = false) String cityName){
+    public RestResponse<PageResult> getAcgnPageByTimeAndCityName(@RequestBody PageParams pageParams, @RequestParam(required = false) String startTime, @RequestParam(required = false) String cityName){
         log.info("分页获取漫展演出表：{}",pageParams);
         int page = Math.toIntExact(pageParams.getPage());
         int size = Math.toIntExact(pageParams.getPageSize());

@@ -230,9 +230,10 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 		LambdaQueryWrapper<VideoBase> queryWrapper = new LambdaQueryWrapper<>();
 
 		queryWrapper
-				.select(VideoBase::getId,VideoBase::getVideoType,VideoBase::getTitle)
+				.select(VideoBase::getId,VideoBase::getVideoType,VideoBase::getTitle,VideoBase::getParentid)
+				.eq(VideoBase::getUserId, userId)
 				.inSql(VideoBase::getParentid, "SELECT DISTINCT parentid FROM video_base")
-				.or(wrapper -> wrapper.eq(VideoBase::getUserId, userId).isNull(VideoBase::getParentid));
+				.or(wrapper -> wrapper.isNull(VideoBase::getParentid));
 
 		Page<VideoBase> ipage = new Page<>(pageParams.getPage(),pageParams.getPageSize());
 		List<VideoBase> videoBaseList = videoBaseMapper.selectPage(ipage, queryWrapper).getRecords();
@@ -246,13 +247,13 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 			Map<Long, VideoBase> newvideoMap = videoBaseList.stream()
 					.filter(s -> "001002".equals(s.getVideoType()))
 					.collect(Collectors.toMap(VideoBase::getId, s -> s, (o1, o2) -> o1));
-			if(newvideoMap != null)
+			if(newvideoMap != null && newvideoMap.size() != 0)
 				videoMap.putAll(newvideoMap);
 
 			newvideoMap = videoBaseList.stream()
 					.filter(s -> "001003".equals(s.getVideoType()))
 					.collect(Collectors.toMap(VideoBase::getParentid, s -> s, (o1, o2) -> o1));
-			if(newvideoMap != null)
+			if(newvideoMap != null && newvideoMap.size() != 0)
 				videoMap.putAll(newvideoMap);
 
 			//获取审核情况
@@ -271,7 +272,7 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 				}).collect(Collectors.toList());
 			}
 		}
-		return new PageResult<>(videoAuditVOList,total,pageParams.getPage(),pageParams.getPageSize());
+		return new PageResult<>(videoAuditVOList,videoAuditVOList.size(),pageParams.getPage(),pageParams.getPageSize());
 	}
 
 

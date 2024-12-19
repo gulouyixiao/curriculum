@@ -6,7 +6,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class SurroundingsDTO {
-    private int page;
-    private int pageSize;
-    private String tags;
+	private int page;
+	private int pageSize;
+	private String tags;
 }

@@ -45,7 +45,7 @@ public class Orders implements Serializable {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
 
     /**
      * 订单类型 数据字典中604
@@ -55,7 +55,7 @@ public class Orders implements Serializable {
     /**
      * 具体商品id
      */
-    private String outBusinessId;
+    private Long outBusinessId;
 
     /**
      * 订单名称
