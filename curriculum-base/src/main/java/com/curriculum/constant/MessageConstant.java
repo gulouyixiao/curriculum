@@ -20,6 +20,7 @@ public class MessageConstant {
     public static final String ACCOUNT_LOCKED = "账号被锁定";
     public static final String TIME_WEEK = "一周内";
     public static final String TIME_MONTH = "一个月内";
+    public static final String OCT = "全国";
     public static final String VIDEO_NOT_FOUND = "视频不存在";
     public static final String VIDEO_STATUS_ERROR = "视频状态错误";
     public static final String GOODS_NOT_FOUND = "商品不存在";

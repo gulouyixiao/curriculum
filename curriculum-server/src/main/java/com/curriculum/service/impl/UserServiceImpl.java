@@ -104,10 +104,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
 
+		LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(User::getCellphone,userRegisterDTO.getCellphone());
+		User user1 = this.getOne(queryWrapper);
+		if(user1 != null){
+			CurriculumException.cast("账号已存在");
+		}
+
 		User user = new User();
 		BeanUtils.copyProperties(userRegisterDTO,user);
 		user.setStatus("1");
 		user.setCreateTime(LocalDateTime.now());
+		user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
 		user.setGrade("1");
 		user.setUtype("205001");
 		this.save(user);

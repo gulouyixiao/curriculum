@@ -81,7 +81,8 @@ public class VideoCommentsServiceImpl extends ServiceImpl<VideoCommentsMapper, V
 		if(!"203002".equals(videoBase.getStatus()) || !"202002".equals(videoBase.getAuditStatus())){
 			CurriculumException.cast(MessageConstant.VIDEO_STATUS_ERROR);
 		}
-
+		videoBase.setCommentCount(videoBase.getCommentCount() + 1);
+		videoBaseMapper.updateById(videoBase);
 		//获取当前用户id
 		Long userId = AuthenticationContext.getContext();
 		User user = userMapper.selectById(userId);

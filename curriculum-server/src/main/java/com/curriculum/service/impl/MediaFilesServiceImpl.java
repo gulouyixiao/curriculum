@@ -50,7 +50,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         Long userId = AuthenticationContext.getContext();
         userId = 1L;
         User user = userService.getById(userId);
-        String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
+//        String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
 
         String fileName = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         String fileId = fileName.substring(0, fileName.lastIndexOf("."));
@@ -60,7 +60,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         mediaFiles.setUsername(user.getUsername());
         mediaFiles.setFileType("001001");
         mediaFiles.setBucket("luimage");
-        mediaFiles.setFilePath(filePath);
+        mediaFiles.setFilePath(fileurl);
         mediaFiles.setFileId(fileId);
         mediaFiles.setUrl(fileurl);
         mediaFiles.setStatus("1");

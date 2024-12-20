@@ -51,6 +51,7 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 	 * @param videoPageParams
 	 * @return
 	 */
+
 	public PageResult<VideoBase> PageQuery(VideoPageParams videoPageParams){
 
 		if(videoPageParams.getVideoType() == null){
@@ -295,8 +296,19 @@ public class VideoBaseServiceImpl extends ServiceImpl<VideoBaseMapper, VideoBase
 
 	@Override
 	public VideoBase videovie(int id) {
-		VideoBase list = videoBaseMapper.selectById(id);
-		return list;
+		//查询视频
+		VideoBase videoBase = videoBaseMapper.selectById(id);
+
+		//只能查看审核通过的
+		if("202002".equals(videoBase.getAuditStatus())){
+			//播放量+1
+			videoBase.setPlaybackVolume(videoBase.getPlaybackVolume() + 1);
+			this.updateById(videoBase);
+
+			return videoBase;
+		}
+
+		return null;
 	}
 
 	@Override

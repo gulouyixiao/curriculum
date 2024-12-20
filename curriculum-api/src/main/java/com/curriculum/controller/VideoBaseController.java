@@ -52,6 +52,7 @@ public class VideoBaseController {
     @PostMapping("/page")
     @ApiOperation(value = "视频番剧分类分页查询")
     @Anonymous
+
     public RestResponse<PageResult> page(@RequestBody VideoPageParams videoPageParams) {
         log.info("分类番剧分页查询：{}", videoPageParams);
         PageResult pageResult = videoBaseService.PageQuery(videoPageParams);
@@ -78,7 +79,7 @@ public class VideoBaseController {
     @Anonymous
     public RestResponse<List<VideoBase>> recommend() {
         log.info("番剧图片轮播推荐");
-        List<VideoBase> videoBases = videoBaseService.recommend("001003",5);
+        List<VideoBase> videoBases = videoBaseService.recommend("001003",6);
         return RestResponse.success(videoBases);
     }
 

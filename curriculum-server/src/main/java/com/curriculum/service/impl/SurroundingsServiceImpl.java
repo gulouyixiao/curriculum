@@ -33,6 +33,10 @@ public class SurroundingsServiceImpl extends ServiceImpl<SurroundingsMapper, Sur
 
         if(tags != null && !tags.isEmpty()){
             for (String s : tags.split(",")) {
+                if(s.equals("全部")){
+                    queryWrapper.clear();
+                    break;
+                }
                 queryWrapper.like(Surroundings::getTags,s);
             }
         }

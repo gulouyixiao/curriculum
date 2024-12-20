@@ -38,6 +38,11 @@ public class AcgnServiceImpl extends ServiceImpl<AcgnMapper, Acgn> implements Ac
             dateTime = dateTime.plusDays(7);
         }else if (MessageConstant.TIME_MONTH.equals(startTime)){
             dateTime = dateTime.plusDays(30);
+        }else {
+            startTime = null;
+        }
+        if(MessageConstant.OCT.equals(cityName)){
+            cityName = null;
         }
 
         LambdaQueryWrapper<Acgn> queryWrapper = new LambdaQueryWrapper<>();
