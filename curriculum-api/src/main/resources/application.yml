@@ -47,4 +47,25 @@ minio:
 curriculum:
   jwt:
     user-secret-key: ${curriculum.jwt.user-secret-key}
-    user-ttl: ${curriculum.jwt.user-
+    user-ttl: ${curriculum.jwt.user-ttl}
+    user-token-name: ${curriculum.jwt.user-token-name}
+aliyun:
+  sms:
+    accessKeyId: ${aliyun.sms.accessKeyId}
+    accessKeySecret: ${aliyun.sms.accessKeySecret}
+    endpoint: ${aliyun.sms.endpoint}
+    signName: ${aliyun.sms.signName}
+    smsCodeTemplateCode: ${aliyun.sms.smsCodeTemplateCode}
+
+alipay:
+  pay:
+    APP_ID: ${alipay.pay.APP_ID}
+    APP_PRIVATE_KEY: ${alipay.pay.APP_PRIVATE_KEY}
+    ALIPAY_PUBLIC_KEY: ${alipay.pay.ALIPAY_PUBLIC_KEY}
+    notifyurl: ${alipay.pay.notifyurl}
+    returnurl: ${alipay.pay.returnurl}
+    url: ${alipay.pay.url}
+    charset: UTF-8
+    format: json
+    log-path: /log
+    sign-type: RSA2

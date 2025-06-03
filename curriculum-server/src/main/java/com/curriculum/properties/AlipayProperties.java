@@ -15,7 +15,7 @@ public class AlipayProperties {
 	public String appPrivateKey;
 	public String alipayPublicKey;
 	public String notifyurl;
-	public String returnUrl;
+	public String returnurl;
 	public String url;
 	public String charset;
 	public String format;
