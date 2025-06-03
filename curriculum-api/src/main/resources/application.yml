@@ -6,17 +6,17 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost/test?serverTimezone=UTC&userUnicode=true&useSSL=false&
-    username: root
-    password: 123456
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
     druid:
-      min-evictable-idle-time-millis: 300000 # 默认300秒，可以适当延长
-      time-between-eviction-runs-millis: 60000 # 默认60秒
-      test-while-idle: true # 在连接空闲时验证连接是否可用
-      validation-query: SELECT 1 # 用于测试连接有效性的 SQL 语句
+      min-evictable-idle-time-millis: 300000
+      time-between-eviction-runs-millis: 60000
+      test-while-idle: true
+      validation-query: SELECT 1
   redis:
     host: localhost
     port: 6379
-    password: 123456
+    password: ${redis.password}
     database: 10
 
   mvc:
@@ -24,43 +24,27 @@ spring:
       matching-strategy: ant_path_matcher
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
-#  mail:
-#    host: smtp.qq.com
-#    port: 465
-#    username: 369496090@qq.com
-#    password: porkexfxcjfnbiac  # 授权码
-#    default-encoding: utf-8
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          ssl.enable: true
-#          starttls.enable: false
-
+      max-file-size: 1000MB
+      max-request-size: 1000MB
+# mail 配置保持注释
 
 springfox:
   documentation:
     enabled: true
-## 日志文件配置路径
-#logging:
-#  config: classpath:log4j2-dev.xml
+
 server:
   port: 10101
-minio:
-  endpoint:  http://127.0.0.1:9000 #Minio服务所在地址
-  accessKey: root #访问的key
-  secretKey: root123456 #访问的秘钥
-  bucket:
-    bucket_mediaFiles: lumediafiles
-    bucket_video: luvideo
-    bucket_image: luimage
 
+minio:
+  endpoint: ${minio.endpoint}
+  accessKey: ${minio.accessKey}
+  secretKey: ${minio.secretKey}
+  bucket:
+    bucket_mediaFiles: ${minio.bucket.bucket_mediaFiles}
+    bucket_video: ${minio.bucket.bucket_video}
+    bucket_image: ${minio.bucket.bucket_image}
 
 curriculum:
   jwt:
-    user-secret-key: curriculum_distribution_user_Wjz6A69BhUE3StNqBb7gQsOIlCx3g= # 设置jwt签名加密时使用的秘钥
-    user-ttl: 8640000000 # 设置jwt过期时间
-    user-token-name:  token # 设置前端传递过来的令牌名称
-
+    user-secret-key: ${curriculum.jwt.user-secret-key}
+    user-ttl: ${curriculum.jwt.user-
