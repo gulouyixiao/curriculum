@@ -2,7 +2,7 @@ package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.dto.PayStatusDTO;
-import com.curriculum.model.po.Orders;
+import com.curriculum.model.po.OrderMain;
 import com.curriculum.model.po.PayRecord;
 
 /**
@@ -17,10 +17,10 @@ public interface PayRecordService extends IService<PayRecord> {
 
 	/**
 	 * 生成支付记录
-	 * @param orders
+	 * @param orderMain
 	 * @return
 	 */
-	PayRecord createOrder(Orders orders, String payType);
+	PayRecord createOrder(OrderMain orderMain, String payType);
 
 	/**
 	 * @description 保存支付结果

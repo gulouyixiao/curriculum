@@ -52,10 +52,10 @@ public class OrdersController {
         return RestResponse.success(payRecord);
     }
 
-    @GetMapping("/generatepaycode")
-    @ApiOperation(value = "生成支付宝支付二维码")
+    @GetMapping("/curriculum/order/submit")
+    @ApiOperation(value = "提交订单")
     public RestResponse AlipayCode(OrderParamsDTO orderParamsDTO) throws Exception {
-        log.info("生成支付宝支付二维码：{}",orderParamsDTO);
+        log.info("提交订单：{}",orderParamsDTO);
 
         QrcodeVO qrcodeVO = ordersService.createCode(orderParamsDTO);
 

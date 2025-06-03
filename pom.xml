@@ -139,6 +139,12 @@
                 <version>${google.zxing.javase.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>5.8.34</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>

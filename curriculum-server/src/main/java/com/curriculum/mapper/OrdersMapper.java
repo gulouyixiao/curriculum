@@ -1,7 +1,7 @@
 package com.curriculum.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.curriculum.model.po.Orders;
+import com.curriculum.model.po.OrderMain;
 
 /**
  * <p>
@@ -10,6 +10,6 @@ import com.curriculum.model.po.Orders;
  *
  * @author gulouyixiao
  */
-public interface OrdersMapper extends BaseMapper<Orders> {
+public interface OrdersMapper extends BaseMapper<OrderMain> {
 
 }

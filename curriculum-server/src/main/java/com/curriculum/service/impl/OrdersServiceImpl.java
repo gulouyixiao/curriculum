@@ -1,5 +1,7 @@
 package com.curriculum.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
@@ -26,10 +28,12 @@ import com.curriculum.model.dto.PayStatusDTO;
 import com.curriculum.model.po.*;
 import com.curriculum.model.vo.QrcodeVO;
 import com.curriculum.properties.AlipayProperties;
+import com.curriculum.service.IShoppingCartService;
 import com.curriculum.service.OrdersService;
 import com.curriculum.service.PayRecordService;
 import com.curriculum.utils.EncryptUtil;
 import com.curriculum.utils.QrCodeUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.simpleframework.xml.Order;
 import org.springframework.beans.BeansException;
@@ -46,6 +50,7 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,22 +58,14 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrdersService {
-
-	@Autowired
-	private PayRecordService payRecordService;
-
-	@Autowired
-	private AlipayProperties alipayConfig;
-
-	@Autowired
-	private AcgnMapper acgnMapper;
-
-	@Autowired
-	private UserMapper userMapper;
-
-	@Autowired
-	private SurroundingsMapper surroundingsMapper;
+@RequiredArgsConstructor
+public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> implements OrdersService {
+	private final PayRecordService payRecordService;
+	private final AlipayProperties alipayConfig;
+	private final AcgnMapper acgnMapper;
+	private final UserMapper userMapper;
+	private final SurroundingsMapper surroundingsMapper;
+	private final IShoppingCartService shoppingCartService;
 
 
 	/**
@@ -94,56 +91,32 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 	 */
 	@Override
 	public QrcodeVO createCode(OrderParamsDTO orderParamsDTO) {
-		if (orderParamsDTO.getNumber() == null || orderParamsDTO.getNumber() <= 0) {
+		// todo 业务逻辑还没更改，只是防止报错
+
+		if(CollUtil.isEmpty(orderParamsDTO.getCartIdList())){
 			CurriculumException.cast(MessageConstant.REQUEST_NULL);
 		}
 
 		//1.获取用户信息
 		Long userId = AuthenticationContext.getContext();
 		User user = userMapper.selectById(userId);
-		if (orderParamsDTO.getPrice() == 0){
-			CurriculumException.cast(MessageConstant.REQUEST_NULL);
-		}
-		//2.生成订单
-		Orders orders = new Orders();
-		orders.setCreateDate(LocalDateTime.now());
-		orders.setStatus("600001");
-		orders.setUserId(userId);
-		orders.setOrderType(orderParamsDTO.getOrderType());
-		orders.setOutBusinessId(orderParamsDTO.getId());
-		//3.补全商品信息
-		if ("acgn".equals(orderParamsDTO.getOrderType())) {
-			//演出商品
-			Acgn acgn = acgnMapper.selectById(orderParamsDTO.getId());
-			if (acgn == null) {
-				CurriculumException.cast(MessageConstant.GOODS_NOT_FOUND);
-			}
-			if (!orderParamsDTO.getPrice().equals(acgn.getPrice())
-					&& !orderParamsDTO.getPrice().equals(acgn.getVipPrice())) {
-				CurriculumException.cast(MessageConstant.DATA_ERROR);
-			}
 
-			orders.setUnitPrice(orderParamsDTO.getPrice());
-			orders.setOrderNumber(orderParamsDTO.getNumber());
-			orders.setTotalPrice(orderParamsDTO.getPrice() * orderParamsDTO.getNumber());
-		} else if ("surrounding".equals(orderParamsDTO.getOrderType())) {
-			//周边信息
-			Surroundings surroundings = surroundingsMapper.selectById(orderParamsDTO.getId());
-			if (!orderParamsDTO.getPrice().equals(surroundings.getPrice())
-					&& !orderParamsDTO.getPrice().equals(surroundings.getVipPrice())) {
-				CurriculumException.cast(MessageConstant.DATA_ERROR);
-			}
+		// 2.获取当前选中购物车商品信息
+		List<Integer> cartIdList = orderParamsDTO.getCartIdList();
 
-			orders.setUnitPrice(orderParamsDTO.getPrice());
-			orders.setOrderNumber(orderParamsDTO.getNumber());
-			orders.setTotalPrice(orderParamsDTO.getPrice() * orderParamsDTO.getNumber());
-		}
 
-		//保存支付订单信息
-		this.save(orders);
+		// 3.主生成订单
+		OrderMain orderMain = new OrderMain();
+		orderMain.setCreateDate(LocalDateTime.now());
+		orderMain.setStatus("600001");
+		orderMain.setUserId(userId);
 
-		//生成支付记录
-		PayRecord payRecord = payRecordService.createOrder(orders, "alipay");
+		// 4.保存子订单数据
+
+
+
+		// 5.生成支付记录
+		PayRecord payRecord = payRecordService.createOrder(orderMain, "alipay");
 
 		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId, alipayConfig.appPrivateKey, alipayConfig.format, alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType);
 		// 创建扫码支付请求
