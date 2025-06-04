@@ -40,4 +40,6 @@ public class MessageConstant {
     public static final String PAY_ORCODE_CREATE = "支付二维码生成错误";
 
     public static  final  String FAILED_VERIFY_PAY_RESULT = "校验支付结果失败";
+
+    public static final  String REQUEST_PAY_QUERY_FAILED = "请求支付查询查询失败";
 }

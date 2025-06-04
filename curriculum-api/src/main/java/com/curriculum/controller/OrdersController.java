@@ -58,6 +58,5 @@ public class OrdersController {
     public RestResponse submitOrder(@Valid @RequestBody OrderParamsDTO orderParamsDTO) throws Exception {
         log.info("提交订单：{}",orderParamsDTO);
         return RestResponse.success(ordersService.createCode(orderParamsDTO));
-
     }
 }

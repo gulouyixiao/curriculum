@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
 import com.curriculum.constant.OrderConstant;
 import com.curriculum.context.AuthenticationContext;
+import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.OrdersMapper;
 import com.curriculum.model.dto.OrderParamsDTO;
@@ -112,8 +113,6 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		receiveNotify(request);
 	}
 
-
-
 	/**
 	 * 请求支付宝查询支付结果
 	 *
@@ -121,17 +120,15 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	 * @return 支付记录信息
 	 */
 	public PayRecord queryPayResult(PayRecord payRecord) {
-		//支付状态
-		String status = payRecord.getStatus();
-		//如果支付成功直接返回
-		if ("600002".equals(status)) {
-			return payRecord;
+		// 1.支付状态检验
+		if (!OrderStatusEnum.UNPAID.getCode().equals(payRecord.getStatus())) {
+			return payRecord; //如果支付状态不在待支付直接返回
 		}
-		//从支付宝查询支付结果
+		// 2.从支付宝查询支付结果
 		PayStatusDTO payStatusDto = queryPayResultFromAlipay(String.valueOf(payRecord.getPayNo()));
-		//保存支付结果
+		// 3.保存支付结果
 		payRecordService.savePayStatus(payStatusDto);
-		//重新查询支付记录
+		// 4.查询最新记录
 		LambdaQueryWrapper<PayRecord> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(PayRecord::getPayNo, payRecord.getPayNo());
 		payRecord = payRecordService.getOne(queryWrapper);
@@ -145,7 +142,30 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	 * @return 支付结果
 	 */
 	public PayStatusDTO queryPayResultFromAlipay(String payNo) {
-		//========请求支付宝查询支付结果=============
+		// 1，请求支付宝查询支付结果
+		Map responseMap = alipayTradeQueryResponse(payNo);
+		String trade_status = (String) responseMap.get("trade_status");
+		String total_amount = (String) responseMap.get("total_amount");
+		String trade_no = (String) responseMap.get("trade_no");
+
+		// 2.保存支付结果
+		PayStatusDTO payStatusDto = new PayStatusDTO();
+		payStatusDto.setOut_trade_no(payNo);
+		payStatusDto.setTrade_status(trade_status);
+		payStatusDto.setApp_id(alipayConfig.appId);
+		payStatusDto.setTrade_no(trade_no);
+		payStatusDto.setTotal_amount(total_amount);
+		payStatusDto.setPay_method(2);
+		return payStatusDto;
+	}
+
+
+	/**
+	 * 请求支付宝查询支付结果
+	 * @param payNo
+	 * @return
+	 */
+	private Map alipayTradeQueryResponse(String payNo) {
 		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId, alipayConfig.appPrivateKey, "json", alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType); //获得初始化的AlipayClient
 		AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
 		JSONObject bizContent = new JSONObject();
@@ -155,34 +175,17 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		try {
 			response = alipayClient.execute(request);
 			if (!response.isSuccess()) {
-				CurriculumException.cast("请求支付查询查询失败");
+				CurriculumException.cast(MessageConstant.REQUEST_PAY_QUERY_FAILED);
 			}
 		} catch (AlipayApiException e) {
 			log.error("请求支付宝查询支付结果异常:{}", e.toString(), e);
-			CurriculumException.cast("请求支付查询查询失败");
+			CurriculumException.cast(MessageConstant.REQUEST_PAY_QUERY_FAILED);
 		}
 
-		//获取支付结果
 		String resultJson = response.getBody();
 
-		//转map
 		Map resultMap = JSON.parseObject(resultJson, Map.class);
-		Map alipay_trade_query_response = (Map) resultMap.get("alipay_trade_query_response");
-
-
-		//支付结果
-		String trade_status = (String) alipay_trade_query_response.get("trade_status");
-		String total_amount = (String) alipay_trade_query_response.get("total_amount");
-		String trade_no = (String) alipay_trade_query_response.get("trade_no");
-		//保存支付结果
-		PayStatusDTO payStatusDto = new PayStatusDTO();
-		payStatusDto.setOut_trade_no(payNo);
-		payStatusDto.setTrade_status(trade_status);
-		payStatusDto.setApp_id(alipayConfig.appId);
-		payStatusDto.setTrade_no(trade_no);
-		payStatusDto.setTotal_amount(total_amount);
-		payStatusDto.setPay_method(2);
-		return payStatusDto;
+		return (Map) resultMap.get("alipay_trade_query_response");
 	}
 
 
