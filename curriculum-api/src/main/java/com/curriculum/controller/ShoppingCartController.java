@@ -5,7 +5,7 @@ import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.AcgnService;
-import com.curriculum.service.IShoppingCartService;
+import com.curriculum.service.ShoppingCartService;
 import com.curriculum.service.SurroundingsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +24,7 @@ import java.util.Objects;
 public class ShoppingCartController {
 
     @Autowired
-    private IShoppingCartService shoppingCartService;
+    private ShoppingCartService shoppingCartService;
 
     @Autowired
     private SurroundingsService surroundingsService;
@@ -34,7 +34,6 @@ public class ShoppingCartController {
 
 
     @ApiOperation("删除购物车信息")
-    /// api/curriculum/cart/remove/{id}
     @GetMapping("remove/{id}")
     public RestResponse<String> remove(@PathVariable Integer id) {
         shoppingCartService.removeById(id);
@@ -48,7 +47,7 @@ public class ShoppingCartController {
     @ApiOperation("获取购物车信息")
     @GetMapping("list")
     public RestResponse<List<ShoppingCart>> list() {
-        List<ShoppingCart> list = shoppingCartService.list();
+        List<ShoppingCart> list = shoppingCartService.list();//应该是带ids的
         return RestResponse.success(list);
     }
 

@@ -22,4 +22,5 @@ public interface ShoppingCartService extends IService<ShoppingCart> {
      */
     List<ShoppingCartVO> listShoppingCartByIds(List<Long> ids);
 
+    void saveShoppingCart(ShoppingCart shoppingCart);
 }

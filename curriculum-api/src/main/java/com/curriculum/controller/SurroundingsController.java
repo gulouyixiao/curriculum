@@ -2,6 +2,7 @@ package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.SurroundingsDTO;
+import com.curriculum.model.po.Surroundings;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.SurroundingsService;
@@ -48,5 +49,14 @@ public class SurroundingsController {
         log.info("周边分页查询：{}", surroundingsDTO);
         PageResult pageResult = surroundingsService.pageQuery(surroundingsDTO);
         return RestResponse.success(pageResult, "查询成功");
+    }
+
+    @ApiOperation("上传周边商品")
+    @PostMapping("publish")
+    public RestResponse<String> publish(@RequestBody Surroundings surroundings) {
+
+
+
+        return RestResponse.success();
     }
 }
