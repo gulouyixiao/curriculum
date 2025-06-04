@@ -54,7 +54,7 @@ public class SurroundingsController {
     @ApiOperation("上传周边商品")
     @PostMapping("publish")
     public RestResponse<String> publish(@RequestBody Surroundings surroundings) {
-
+        surroundingsService.insert(surroundings);
 
 
         return RestResponse.success();

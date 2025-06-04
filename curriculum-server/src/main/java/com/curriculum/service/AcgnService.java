@@ -15,4 +15,6 @@ import com.curriculum.model.vo.PageResult;
 public interface AcgnService extends IService<Acgn> {
 
     PageResult<Acgn> getAcgnPageByTimeAndCityName(int page, int size, String startTime, String cityName);
+
+    void insert(Acgn acgn);
 }

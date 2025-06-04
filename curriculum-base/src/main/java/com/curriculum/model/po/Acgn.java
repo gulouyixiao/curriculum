@@ -91,5 +91,6 @@ public class Acgn implements Serializable {
      */
     private String pic;
 
+    private Long userId;
 
 }

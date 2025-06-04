@@ -3,6 +3,7 @@ package com.curriculum.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.curriculum.context.AuthenticationContext;
 import com.curriculum.mapper.SurroundingsMapper;
 import com.curriculum.model.dto.SurroundingsDTO;
 import com.curriculum.model.po.Surroundings;
@@ -44,5 +45,12 @@ public class SurroundingsServiceImpl extends ServiceImpl<SurroundingsMapper, Sur
         Page<Surroundings> ipage = new Page<>(videoPageParams.getPage(),videoPageParams.getPageSize());
         Page<Surroundings> videoBasePage = baseMapper.selectPage(ipage, queryWrapper);
         return new PageResult(videoBasePage.getRecords(),videoBasePage.getTotal(), videoPageParams.getPage(), videoPageParams.getPageSize());
+    }
+
+    @Override
+    public void insert(Surroundings surroundings) {
+        Long userId = AuthenticationContext.getContext();
+        surroundings.setUserId(userId);
+        baseMapper.insert(surroundings);
     }
 }

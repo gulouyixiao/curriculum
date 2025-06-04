@@ -55,5 +55,10 @@ public class Surroundings implements Serializable {
      */
     private String pic;
 
+    /**
+     * 用户id
+     */
+    private Long userId;
+
 
 }

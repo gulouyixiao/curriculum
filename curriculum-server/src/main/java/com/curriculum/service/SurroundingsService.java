@@ -16,4 +16,6 @@ import com.curriculum.model.vo.PageResult;
 public interface SurroundingsService extends IService<Surroundings> {
 
     PageResult pageQuery(SurroundingsDTO videoPageParams);
+
+    void insert(Surroundings surroundings);
 }

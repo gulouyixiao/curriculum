@@ -46,4 +46,11 @@ public class AcgnController {
 
         return RestResponse.success(acgnPageByTimeAndCityName, "查询成功");
     }
+
+    @ApiOperation("上传漫展")
+    @PostMapping("/public")
+    public RestResponse<String> publicAcgn(@RequestBody Acgn acgn){
+        acgnService.insert(acgn);
+        return RestResponse.success();
+    }
 }

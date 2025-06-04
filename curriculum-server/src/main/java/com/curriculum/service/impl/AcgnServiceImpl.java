@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
+import com.curriculum.context.AuthenticationContext;
 import com.curriculum.mapper.AcgnMapper;
 import com.curriculum.model.po.Acgn;
 import com.curriculum.model.vo.PageResult;
@@ -55,5 +56,13 @@ public class AcgnServiceImpl extends ServiceImpl<AcgnMapper, Acgn> implements Ac
 
         PageResult<Acgn> acgnPageResult = new PageResult<>(acgnPage.getRecords(), acgnPage.getTotal(), page, size);
         return acgnPageResult;
+    }
+
+    @Override
+    public void insert(Acgn acgn) {
+        Long userId = AuthenticationContext.getContext();
+        acgn.setUserId(userId);
+        this.save(acgn);
+
     }
 }
