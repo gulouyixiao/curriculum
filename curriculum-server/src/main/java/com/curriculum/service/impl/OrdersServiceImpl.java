@@ -30,7 +30,6 @@ import com.curriculum.utils.EncryptUtil;
 import com.curriculum.utils.QrCodeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +37,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -239,17 +237,17 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 				payStatusDto.setPay_method(2);//1微信支付 2支付宝支付
 
 				//交易成功处理
-				if (trade_status.equals("TRADE_SUCCESS")) {
+				if (trade_status.equals(OrderConstant.TRADE_SUCCESS)) {
 					payStatusDto.setTrade_status(trade_status);
 					result = true;
 				} else {
-					payStatusDto.setTrade_status("TRADE_FALSE");
+					payStatusDto.setTrade_status(OrderConstant.TRADE_FALSE);
 					result = false;
 				}
 				//修改订单支付记录表状态和订单支付状态
 				payRecordService.savePayStatus(payStatusDto);
 			} catch (UnsupportedEncodingException e) {
-				log.error("获取支付宝数据错误：{}", e.getMessage());
+				log.error("获取支付宝数据错误", e);
 			}
 		} else {
 			log.error("支付宝验签错误：verify_result: {}", verify_result);
@@ -301,6 +299,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		}
 
 		bizContent.put("subject", orderName); // 设置订单标题
+		// 设置 10 分钟超时关闭（必须是 m 表示分钟）
+		bizContent.put("timeout_express", OrderConstant.TIMEOUT_EXPRESS);
 
 		// 设置扫码支付的产品码
 		bizContent.put("product_code", "FACE_TO_FACE_PAYMENT");

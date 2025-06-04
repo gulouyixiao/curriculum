@@ -33,8 +33,11 @@ public class MessageConstant {
     public static final String PASSWORD_EDIT_FAILED = "密码修改失败";
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
+    public static final String PAY_RECORD_NOT_FOUND = "支付记录不存在";
     public static final String ORDER_PAID = "订单已支付";
 
 
     public static final String PAY_ORCODE_CREATE = "支付二维码生成错误";
+
+    public static  final  String FAILED_VERIFY_PAY_RESULT = "校验支付结果失败";
 }

@@ -14,4 +14,12 @@ public interface OrderConstant {
     String DEFAULT_ORDER_TITLE = "默认订单标题";
 
     String REQUEST_PAY_ERROR = "请求第三方支付错误";
+    
+    String TRADE_SUCCESS = "TRADE_SUCCESS";
+
+    String TRADE_FALSE  = "TRADE_FALSE";
+
+    //10 分钟
+    String TIMEOUT_EXPRESS = "10m";
+
 }

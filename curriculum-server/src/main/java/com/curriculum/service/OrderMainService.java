@@ -26,4 +26,10 @@ public interface OrderMainService extends IService<OrderMain> {
      */
     OrderMain submitOrder(List<ShoppingCartVO> shoppingCartVOList, User user);
 
+    /**
+     * 更新订单状态
+     * @param orderMain
+     */
+    void updateOrderStatus(OrderMain orderMain);
+
 }
