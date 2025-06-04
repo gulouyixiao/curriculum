@@ -13,4 +13,5 @@ import com.curriculum.model.po.ShoppingCart;
  */
 public interface IShoppingCartService extends IService<ShoppingCart> {
 
+    void saveShoppingCart(ShoppingCart shoppingCart);
 }
