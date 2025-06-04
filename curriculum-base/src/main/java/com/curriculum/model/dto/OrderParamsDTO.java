@@ -16,7 +16,8 @@ import java.util.List;
 @ApiModel(description = "提交订单")
 public class OrderParamsDTO {
 	@ApiModelProperty(value = "购物车商品id集合")
-	private List<Integer> cartIdList;
+	@NotEmpty(message = "购物车商品id集合不能为空")
+	private List<Long> cartIdList;
 
 	@ApiModelProperty(value = "总价（沉余参数）")
 	private String totalPrice;

@@ -57,8 +57,6 @@ CREATE TABLE `order_main`  (
   `user_id` bigint(20) NOT NULL COMMENT '用户id',
   `order_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '订单名称',
   `order_descrip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '订单描述',
-  `unit_price` float(8, 2) NOT NULL COMMENT '单价',
-  `order_number` int(11) NOT NULL DEFAULT 1 COMMENT '数量',
   `pay_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单主表' ROW_FORMAT = DYNAMIC;

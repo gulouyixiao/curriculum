@@ -68,18 +68,6 @@ public class OrderMain implements Serializable {
     private String orderDescrip;
 
     /**
-     * 单价
-     */
-    @TableField("unit_price")
-    private Double unitPrice;
-
-    /**
-     * 数量
-     */
-    @TableField("order_number")
-    private Integer orderNumber;
-
-    /**
      * 支付时间
      */
     @TableField("pay_time")

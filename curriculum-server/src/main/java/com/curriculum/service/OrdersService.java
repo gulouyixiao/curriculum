@@ -17,7 +17,7 @@ public interface OrdersService extends IService<OrderMain> {
 	 * 支付结果通知
 	 * @param request
 	 */
-	Boolean receiveNotify(HttpServletRequest request, String PayType);
+	void receiveNotify(HttpServletRequest request, String PayType);
 
 	/**
 	 * 查询支付结果

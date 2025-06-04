@@ -3,9 +3,7 @@ package com.curriculum.model.po;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,10 +15,8 @@ import java.time.LocalDateTime;
  * @author lxr
  * @since 2025-06-03 18:22:01
  */
-@Getter
-@Setter
-@ToString
 @TableName("orders_detail")
+@Data
 public class OrdersDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;

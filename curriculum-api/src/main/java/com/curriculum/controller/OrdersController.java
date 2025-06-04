@@ -13,11 +13,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,11 +31,10 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/curriculum")
 @Api(tags = "用户订单相关接口")
+@Validated
 public class OrdersController {
-
     @Autowired
     private OrdersService ordersService;
-
 
     @ApiOperation("接收支付结果通知")
     @PostMapping("/receivenotify/{payType}")
@@ -52,14 +53,11 @@ public class OrdersController {
         return RestResponse.success(payRecord);
     }
 
-    @GetMapping("/curriculum/order/submit")
+    @PostMapping("/curriculum/order/submit")
     @ApiOperation(value = "提交订单")
-    public RestResponse AlipayCode(OrderParamsDTO orderParamsDTO) throws Exception {
+    public RestResponse AlipayCode(@Valid @RequestBody OrderParamsDTO orderParamsDTO) throws Exception {
         log.info("提交订单：{}",orderParamsDTO);
-
-        QrcodeVO qrcodeVO = ordersService.createCode(orderParamsDTO);
-
-        return RestResponse.success(qrcodeVO);
+        return RestResponse.success(ordersService.createCode(orderParamsDTO));
 
     }
 }

@@ -51,7 +51,7 @@ public class SnowFlakeUtils {
 	}
 
 	//产生订单号
-	public synchronized String createStringID(boolean isPre) {
+	public synchronized String nextStringID(boolean isPre) {
 		long currStamp = getNewStamp();
 
 		//如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
@@ -82,6 +82,38 @@ public class SnowFlakeUtils {
 					| sequence);
 		}
 		return "" + ((currStamp - START_STAMP) << TIMESTAMP_LEFT //时间戳部分
+				| dataCenterId << DATA_CENTER_LEFT //数据中心部分
+				| machineId << MACHINE_LEFT //机器标识部分
+				| sequence); //序列号部分
+
+	}
+
+	//产生订单号
+	public synchronized Long nextID() {
+		long currStamp = getNewStamp();
+
+		//如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+		if (currStamp < lastStamp) {
+			throw new RuntimeException("Clock moved backwards. Refusing to generate id");
+		}
+
+		//如果是同一时间生成的，则进行毫秒内序列
+		if (currStamp == lastStamp) {
+			//相同毫秒内，序列号自增
+			sequence = (sequence + 1) & MAX_SEQUENCE;
+			//同一毫秒的序列数已经达到最大
+			if (sequence == 0L) {
+				//阻塞到下一个毫秒,获得新的时间戳
+				currStamp = getNextMill();
+			}
+		} else {
+			//不同毫秒内，序列号置为0
+			sequence = 0L;
+		}
+
+		//上次生成ID的时间截
+		lastStamp = currStamp;
+		return ((currStamp - START_STAMP) << TIMESTAMP_LEFT //时间戳部分
 				| dataCenterId << DATA_CENTER_LEFT //数据中心部分
 				| machineId << MACHINE_LEFT //机器标识部分
 				| sequence); //序列号部分

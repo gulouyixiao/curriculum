@@ -1,53 +1,45 @@
 package com.curriculum.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.internal.util.StringUtils;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
-import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
+import com.curriculum.constant.OrderConstant;
 import com.curriculum.context.AuthenticationContext;
 import com.curriculum.exception.CurriculumException;
-import com.curriculum.mapper.AcgnMapper;
 import com.curriculum.mapper.OrdersMapper;
-import com.curriculum.mapper.SurroundingsMapper;
-import com.curriculum.mapper.UserMapper;
 import com.curriculum.model.dto.OrderParamsDTO;
-import com.curriculum.model.dto.PayParamsDTO;
 import com.curriculum.model.dto.PayStatusDTO;
 import com.curriculum.model.po.*;
 import com.curriculum.model.vo.QrcodeVO;
+import com.curriculum.model.vo.ShoppingCartVO;
 import com.curriculum.properties.AlipayProperties;
-import com.curriculum.service.IShoppingCartService;
-import com.curriculum.service.OrdersService;
-import com.curriculum.service.PayRecordService;
+import com.curriculum.service.*;
 import com.curriculum.utils.EncryptUtil;
 import com.curriculum.utils.QrCodeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.simpleframework.xml.Order;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,10 +54,9 @@ import java.util.Map;
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> implements OrdersService {
 	private final PayRecordService payRecordService;
 	private final AlipayProperties alipayConfig;
-	private final AcgnMapper acgnMapper;
-	private final UserMapper userMapper;
-	private final SurroundingsMapper surroundingsMapper;
-	private final IShoppingCartService shoppingCartService;
+	private final UserService userService;
+	private final ShoppingCartService shoppingCartService;
+	private final OrderMainService orderMainService;
 
 
 	/**
@@ -74,6 +65,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	 * @param payNo
 	 * @return
 	 */
+	@Override
 	public PayRecord queryPayResult(String payNo) {
 		LambdaQueryWrapper<PayRecord> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(PayRecord::getPayNo, payNo);
@@ -87,88 +79,29 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	/**
 	 * 生成支付二维码
 	 *
-	 * @return
+	 * @return 结果
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public QrcodeVO createCode(OrderParamsDTO orderParamsDTO) {
-		// todo 业务逻辑还没更改，只是防止报错
-
-		if(CollUtil.isEmpty(orderParamsDTO.getCartIdList())){
-			CurriculumException.cast(MessageConstant.REQUEST_NULL);
-		}
-
-		//1.获取用户信息
+		// 1.获取用户信息
 		Long userId = AuthenticationContext.getContext();
-		User user = userMapper.selectById(userId);
+		User user = userService.getById(userId);
 
 		// 2.获取当前选中购物车商品信息
-		List<Integer> cartIdList = orderParamsDTO.getCartIdList();
-
-
-		// 3.主生成订单
-		OrderMain orderMain = new OrderMain();
-		orderMain.setCreateDate(LocalDateTime.now());
-		orderMain.setStatus("600001");
-		orderMain.setUserId(userId);
-
-		// 4.保存子订单数据
-
-
-
-		// 5.生成支付记录
-		PayRecord payRecord = payRecordService.createOrder(orderMain, "alipay");
-
-		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId, alipayConfig.appPrivateKey, alipayConfig.format, alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType);
-		// 创建扫码支付请求
-		AlipayTradePrecreateRequest alipayRequest = new AlipayTradePrecreateRequest(); // 创建API对应的request
-		alipayRequest.setNotifyUrl(alipayConfig.notifyurl); // 设置回调通知地址
-
-		JSONObject bizContent = new JSONObject();
-		// 商户订单号，商家自定义，保持唯一性
-		bizContent.put("out_trade_no", payRecord.getPayNo());
-		// 支付金额
-		bizContent.put("total_amount", payRecord.getTotalPrice());
-		// 检查订单标题是否为空
-		String orderName = payRecord.getOrderName();
-		if (orderName == null || orderName.isEmpty()) {
-			orderName = "默认订单标题";
+		List<Long> cartIdList = orderParamsDTO.getCartIdList();
+		List<ShoppingCartVO> shoppingCartVOList = shoppingCartService.listShoppingCartByIds(cartIdList);
+		if(CollUtil.isEmpty(shoppingCartVOList)){
+			CurriculumException.cast(MessageConstant.GOODS_NOT_FOUND);
 		}
-		bizContent.put("subject", orderName); // 设置订单标题
-
-		// 设置扫码支付的产品码
-		bizContent.put("product_code", "FACE_TO_FACE_PAYMENT");
-		alipayRequest.setBizContent(bizContent.toString()); // 填充业务参数
-		String qrCode = ""; // 用于存放二维码的URL
-		try {
-			// 请求支付宝下单接口，发起http请求
-			AlipayTradePrecreateResponse response = alipayClient.execute(alipayRequest);
-
-			if (response.isSuccess()) {
-				// 获取二维码链接
-				qrCode = response.getQrCode();
-				// 你可以在这里返回二维码链接，供前端展示
-			} else {
-				log.error("生成二维码失败：{}", response.getSubMsg());
-			}
-		} catch (AlipayApiException e) {
-			log.error("调用支付宝下单接口错误：{}", alipayRequest, e);
-		}
-
-		ByteArrayOutputStream os = null;
-		try {
-			BufferedImage image = QrCodeUtils.createImage(qrCode, null, true);
-			os = new ByteArrayOutputStream();
-			ImageIO.write(image,"png",os);
-		} catch (Exception e) {
-			CurriculumException.cast("支付验证码生成失败");
-		}
-
-		String resultImage = new String("data:image/png;base64," + EncryptUtil.encodeBase64(os.toByteArray()));
-
-		QrcodeVO qrcodeVO = new QrcodeVO();
-		qrcodeVO.setPayNo(payRecord.getPayNo());
-		qrcodeVO.setQrcodeUrl(resultImage);
-		return qrcodeVO;
+		// 3.提交订单
+		OrderMain orderMain = orderMainService.submitOrder(shoppingCartVOList, user);
+		// 4.生成支付记录
+		PayRecord payRecord = payRecordService.createOrder(orderMain, OrderConstant.ALIPAY);
+		// 5.请求第三方下单接口，获取下单链接
+		String payUrl = requestPay(payRecord);
+		// 6.生成支付二维码，封装结果返回
+        return createPayQrcode(payUrl, payRecord);
 	}
 
 	/**
@@ -177,85 +110,10 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	 * @param request
 	 */
 	@Override
-	public Boolean receiveNotify(HttpServletRequest request, String payType) {
-		try {
-			return receiveNotify(request);
-		} catch (BeansException e) {
-			CurriculumException.cast("支付通知类型错误");
-		}
-		return false;
+	public void receiveNotify(HttpServletRequest request, String payType) {
+		receiveNotify(request);
 	}
 
-
-
-	/**
-	 * 支付结果通知统一方法
-	 *
-	 * @param request
-	 */
-	public Boolean receiveNotify(HttpServletRequest request) {
-		Boolean result = false;
-
-		Map<String, String> params = new HashMap<String, String>();
-		Map requestParams = request.getParameterMap();
-		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
-			String name = (String) iter.next();
-			String[] values = (String[]) requestParams.get(name);
-			String valueStr = "";
-			for (int i = 0; i < values.length; i++) {
-				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
-			}
-			params.put(name, valueStr);
-		}
-		//验签
-		boolean verify_result = false;
-
-		try {
-			verify_result = AlipaySignature.rsaCheckV1(params, alipayConfig.alipayPublicKey, alipayConfig.charset, alipayConfig.signType);
-		} catch (AlipayApiException e) {
-			log.error("支付宝验签错误：{}", e.getMessage());
-			return result;
-		}
-
-		if (verify_result) {
-			try {
-				//验证成功
-				//商户订单号
-				String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"), "UTF-8");
-				//支付宝交易号
-				String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"), "UTF-8");
-				//交易状态
-				String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
-				//appid
-				String app_id = new String(request.getParameter("app_id").getBytes("ISO-8859-1"), "UTF-8");
-				//total_amount
-				String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
-
-				PayStatusDTO payStatusDto = new PayStatusDTO();
-				payStatusDto.setOut_trade_no(out_trade_no);
-				payStatusDto.setApp_id(app_id);
-				payStatusDto.setTrade_no(trade_no);
-				payStatusDto.setTotal_amount(total_amount);
-				payStatusDto.setPay_method(2);//1微信支付 2支付宝支付
-
-				//交易成功处理
-				if (trade_status.equals("TRADE_SUCCESS")) {
-					payStatusDto.setTrade_status(trade_status);
-					result = true;
-				} else {
-					payStatusDto.setTrade_status("TRADE_FALSE");
-					result = false;
-				}
-				//修改订单支付记录表状态和订单支付状态
-				payRecordService.savePayStatus(payStatusDto);
-			} catch (UnsupportedEncodingException e) {
-				log.error("获取支付宝数据错误：{}", e.getMessage());
-			}
-		} else {
-			log.error("支付宝验签错误：verify_result: {}", verify_result);
-		}
-		return result;
-	}
 
 
 	/**
@@ -327,6 +185,139 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		payStatusDto.setTotal_amount(total_amount);
 		payStatusDto.setPay_method(2);
 		return payStatusDto;
+	}
+
+
+	/**
+	 * 支付结果通知统一方法
+	 *
+	 * @param request
+	 */
+	private Boolean receiveNotify(HttpServletRequest request) {
+		Boolean result = false;
+
+		Map<String, String> params = new HashMap<>();
+		Map requestParams = request.getParameterMap();
+		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+			String name = (String) iter.next();
+			String[] values = (String[]) requestParams.get(name);
+			String valueStr = "";
+			for (int i = 0; i < values.length; i++) {
+				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+			}
+			params.put(name, valueStr);
+		}
+		//验签
+		boolean verify_result = false;
+
+		try {
+			verify_result = AlipaySignature.rsaCheckV1(params, alipayConfig.alipayPublicKey, alipayConfig.charset, alipayConfig.signType);
+		} catch (AlipayApiException e) {
+			log.error("支付宝验签错误：{}", e.getMessage());
+			return result;
+		}
+
+		if (verify_result) {
+			try {
+				//验证成功
+				//商户订单号
+				String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"), "UTF-8");
+				//支付宝交易号
+				String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"), "UTF-8");
+				//交易状态
+				String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
+				//appid
+				String app_id = new String(request.getParameter("app_id").getBytes("ISO-8859-1"), "UTF-8");
+				//total_amount
+				String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
+
+				PayStatusDTO payStatusDto = new PayStatusDTO();
+				payStatusDto.setOut_trade_no(out_trade_no);
+				payStatusDto.setApp_id(app_id);
+				payStatusDto.setTrade_no(trade_no);
+				payStatusDto.setTotal_amount(total_amount);
+				payStatusDto.setPay_method(2);//1微信支付 2支付宝支付
+
+				//交易成功处理
+				if (trade_status.equals("TRADE_SUCCESS")) {
+					payStatusDto.setTrade_status(trade_status);
+					result = true;
+				} else {
+					payStatusDto.setTrade_status("TRADE_FALSE");
+					result = false;
+				}
+				//修改订单支付记录表状态和订单支付状态
+				payRecordService.savePayStatus(payStatusDto);
+			} catch (UnsupportedEncodingException e) {
+				log.error("获取支付宝数据错误：{}", e.getMessage());
+			}
+		} else {
+			log.error("支付宝验签错误：verify_result: {}", verify_result);
+		}
+		return result;
+	}
+
+	/**
+	 * 生成支付二维码
+	 * @param payUrl 支付路径
+	 * @param payRecord 支付记录
+	 * @return 结果
+	 */
+	private QrcodeVO createPayQrcode(String payUrl, PayRecord payRecord) {
+		String resultImage = "";
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			BufferedImage image = QrCodeUtils.createImage(payUrl, null, true);
+			ImageIO.write(image,"png",os);
+			resultImage = new String("data:image/png;base64," + EncryptUtil.encodeBase64(os.toByteArray()));
+		} catch (Exception e) {
+			CurriculumException.cast(MessageConstant.PAY_ORCODE_CREATE);
+		}
+		QrcodeVO qrcodeVO = new QrcodeVO();
+		qrcodeVO.setPayNo(payRecord.getPayNo());
+		qrcodeVO.setQrcodeUrl(resultImage);
+		return qrcodeVO;
+	}
+
+	/**
+	 * 请求第三方支付
+	 * @param payRecord 支付
+	 * @return 结果
+	 */
+	private String requestPay(PayRecord payRecord) {
+		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId, alipayConfig.appPrivateKey, alipayConfig.format, alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType);
+		// 创建扫码支付请求
+		AlipayTradePrecreateRequest alipayRequest = new AlipayTradePrecreateRequest(); // 创建API对应的request
+		alipayRequest.setNotifyUrl(alipayConfig.notifyurl); // 设置回调通知地址
+
+		JSONObject bizContent = new JSONObject();
+		// 商户订单号，商家自定义，保持唯一性
+		bizContent.put("out_trade_no", payRecord.getPayNo());
+		// 支付金额
+		bizContent.put("total_amount", payRecord.getTotalPrice());
+		// 检查订单标题是否为空
+		String orderName = payRecord.getOrderName();
+		if(StringUtils.isEmpty(orderName)){
+			orderName = OrderConstant.DEFAULT_ORDER_TITLE;
+		}
+
+		bizContent.put("subject", orderName); // 设置订单标题
+
+		// 设置扫码支付的产品码
+		bizContent.put("product_code", "FACE_TO_FACE_PAYMENT");
+		alipayRequest.setBizContent(bizContent.toString()); // 填充业务参数
+		try {
+			// 请求支付宝下单接口，发起http请求
+			AlipayTradePrecreateResponse response = alipayClient.execute(alipayRequest);
+			if (response.isSuccess()) {
+				// 获取二维码链接
+				return response.getQrCode();
+			}
+			log.error("生成二维码失败：{}", response.getSubMsg());
+		} catch (AlipayApiException e) {
+			log.error("调用支付宝下单接口错误：{}", alipayRequest, e);
+		}
+		CurriculumException.cast(OrderConstant.REQUEST_PAY_ERROR);
+		return null;
 	}
 
 
