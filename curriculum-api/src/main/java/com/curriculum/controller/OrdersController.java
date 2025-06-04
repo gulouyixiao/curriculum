@@ -1,28 +1,30 @@
 package com.curriculum.controller;
 
+import com.alipay.api.domain.OrderDetail;
 import com.curriculum.annotation.Anonymous;
+import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.dto.OrderParamsDTO;
-import com.curriculum.model.dto.PayParamsDTO;
+import com.curriculum.model.po.OrderMain;
+import com.curriculum.model.po.OrdersDetail;
 import com.curriculum.model.po.PayRecord;
-import com.curriculum.model.vo.QrcodeVO;
+import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
+import com.curriculum.service.OrderMainService;
+import com.curriculum.service.OrdersDetailService;
 import com.curriculum.service.OrdersService;
-import com.curriculum.utils.EncryptUtil;
-import com.curriculum.utils.QrCodeUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.util.List;
 
 /**
  * 订单表 前端控制器
@@ -35,6 +37,14 @@ import java.io.IOException;
 public class OrdersController {
     @Autowired
     private OrdersService ordersService;
+
+    @Autowired
+    private OrderMainService orderMainService;
+
+    @Autowired
+    private OrderDetail orderDetail;
+    @Autowired
+    private OrdersDetailService ordersDetailService;
 
     @ApiOperation("接收支付结果通知")
     @PostMapping("/receivenotify/{payType}")
@@ -59,5 +69,20 @@ public class OrdersController {
         log.info("提交订单：{}",orderParamsDTO);
         return RestResponse.success(ordersService.createCode(orderParamsDTO));
 
+    }
+
+    @ApiOperation("查看历史订单")
+    @PostMapping("/listPage")
+    public RestResponse listPage(@Valid @RequestBody OrderDTO orderDTO) throws Exception {
+
+        PageResult result = orderMainService.PageQuery(orderDTO);
+        return RestResponse.success(result);
+    }
+
+    @ApiOperation("查看详细订单")
+    @GetMapping("/order/{id}")
+    public RestResponse getOrderById(@PathVariable Long id) throws Exception {
+        OrdersDetail orderDetail = ordersDetailService.getById(id);
+        return RestResponse.success(orderDetail);
     }
 }

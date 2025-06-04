@@ -1,14 +1,18 @@
 package com.curriculum.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
 import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.OrderMainMapper;
+import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.po.OrderMain;
 import com.curriculum.model.po.OrdersDetail;
 import com.curriculum.model.po.User;
+import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.ShoppingCartVO;
 import com.curriculum.service.OrderMainService;
 import com.curriculum.service.OrdersDetailService;
@@ -36,6 +40,9 @@ import java.util.stream.Collectors;
 public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain> implements OrderMainService {
     @Autowired
     private  OrdersDetailService ordersDetailService;
+
+    @Autowired
+    private OrderMainMapper orderMainMapper;
     /**
      * 提交订单
      * @param shoppingCartVOList 购物车商品
@@ -80,5 +87,37 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
 
         ordersDetailService.saveBatch(ordersDetailList);
         return  orderMain;
+    }
+
+    //用于订单页面的查询
+    @Override
+    public PageResult<OrderMain> PageQuery(OrderDTO orderDTO) {
+        // 参数校验
+        if (orderDTO.getPage() == null || orderDTO.getPage() < 1) {
+            orderDTO.setPage(1L); // 设置默认页码
+        }
+        if (orderDTO.getPageSize() == null || orderDTO.getPageSize() < 1) {
+            orderDTO.setPageSize(20L); // 设置默认每页大小
+        }
+
+        // 构建查询条件
+        LambdaQueryWrapper<OrderMain> queryWrapper = new LambdaQueryWrapper<>();
+
+        // 根据状态筛选（如果状态不为空）
+        if (orderDTO.getStatus() != null && !orderDTO.getStatus().isEmpty()) {
+            queryWrapper.eq(OrderMain::getStatus, orderDTO.getStatus());
+        }
+
+        // 分页查询
+        Page<OrderMain> page = new Page<>(orderDTO.getPage(), orderDTO.getPageSize());
+        Page<OrderMain> orderPage = orderMainMapper.selectPage(page, queryWrapper);
+
+        // 构建分页结果
+        return new PageResult<>(
+                orderPage.getRecords(), // 数据列表
+                orderPage.getTotal(),   // 总记录数
+                orderDTO.getPage(),     // 当前页码
+                orderDTO.getPageSize()  // 每页大小
+        );
     }
 }

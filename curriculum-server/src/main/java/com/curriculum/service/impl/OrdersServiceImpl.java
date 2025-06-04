@@ -13,15 +13,19 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
 import com.curriculum.constant.OrderConstant;
 import com.curriculum.context.AuthenticationContext;
 import com.curriculum.exception.CurriculumException;
+import com.curriculum.mapper.OrderMainMapper;
 import com.curriculum.mapper.OrdersMapper;
+import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.dto.OrderParamsDTO;
 import com.curriculum.model.dto.PayStatusDTO;
 import com.curriculum.model.po.*;
+import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.QrcodeVO;
 import com.curriculum.model.vo.ShoppingCartVO;
 import com.curriculum.properties.AlipayProperties;
@@ -57,6 +61,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	private final UserService userService;
 	private final ShoppingCartService shoppingCartService;
 	private final OrderMainService orderMainService;
+	private final OrderMainMapper orderMainMapper;
 
 
 	/**
