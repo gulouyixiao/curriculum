@@ -3,17 +3,15 @@ package com.curriculum.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.curriculum.constant.MessageConstant;
 import com.curriculum.exception.CurriculumException;
+import com.curriculum.mapper.OrderMainMapper;
 import com.curriculum.mapper.OrdersMapper;
 import com.curriculum.mapper.PayRecordMapper;
 import com.curriculum.model.dto.PayStatusDTO;
-import com.curriculum.model.po.Orders;
+import com.curriculum.model.po.OrderMain;
 import com.curriculum.model.po.PayRecord;
 import com.curriculum.properties.AlipayProperties;
 import com.curriculum.service.PayRecordService;
-import com.curriculum.utils.SnowFlakeUtils;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,38 +37,42 @@ public class PayRecordServiceImpl extends ServiceImpl<PayRecordMapper, PayRecord
 	private PayRecordMapper payRecordMapper;
 
 	@Autowired
-	private OrdersMapper ordersMapper;
+	private OrderMainMapper orderMainMapper;
 
 	@Override
-	public PayRecord createOrder(Orders orders, String payType) {
-		if(orders == null){
-			CurriculumException.cast(MessageConstant.ORDER_NOT_FOUND);
-		}
-
-		if("601002".equals(orders.getStatus())){
-			CurriculumException.cast(MessageConstant.ORDER_PAID);
-		}
-
-		PayRecord payRecord = new PayRecord();
-		//生成支付交易
-		String payNo = SnowFlakeUtils.getInstance().createStringID(false);
-		payRecord.setPayNo(payNo);
-		payRecord.setOrderId(orders.getId());
-		payRecord.setOrderName(orders.getOrderName());
-		payRecord.setTotalPrice(orders.getTotalPrice());//实际金额
-		payRecord.setCurrency("CNY");
-		payRecord.setCreateDate(LocalDateTime.now());
-		payRecord.setStatus("600001");
-		payRecord.setUserId(orders.getUserId()); //todo 待完善
-		payRecord.setOutPayChannel(payType);
-		this.save(payRecord);
-
-		return payRecord;
+	public PayRecord createOrder(OrderMain orderMain, String payType) {
+		// todo 业务逻辑还没更改，只是防止报错
+//		if(orders == null){
+//			CurriculumException.cast(MessageConstant.ORDER_NOT_FOUND);
+//		}
+//
+//		if("601002".equals(orders.getStatus())){
+//			CurriculumException.cast(MessageConstant.ORDER_PAID);
+//		}
+//
+//		PayRecord payRecord = new PayRecord();
+//		//生成支付交易
+//		String payNo = SnowFlakeUtils.getInstance().createStringID(false);
+//		payRecord.setPayNo(payNo);
+//		payRecord.setOrderId(orders.getId());
+//		payRecord.setOrderName(orders.getOrderName());
+//		payRecord.setTotalPrice(orders.getTotalPrice());//实际金额
+//		payRecord.setCurrency("CNY");
+//		payRecord.setCreateDate(LocalDateTime.now());
+//		payRecord.setStatus("600001");
+//		payRecord.setUserId(orders.getUserId()); //todo 待完善
+//		payRecord.setOutPayChannel(payType);
+//		this.save(payRecord);
+//
+//		return payRecord;
+		return null;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void savePayStatus(PayStatusDTO payStatusDto) {
+		// todo 业务逻辑还没更改，只是防止报错
+
 		//支付流水号
 		String payNo = payStatusDto.getOut_trade_no();
 
@@ -109,13 +111,13 @@ public class PayRecordServiceImpl extends ServiceImpl<PayRecordMapper, PayRecord
 			}
 			//关联的订单号
 			Long orderId = payRecord.getOrderId();
-			Orders orders = ordersMapper.selectById(orderId);
+			OrderMain orders = orderMainMapper.selectById(orderId);
 			if (orders == null) {
 				log.info("根据支付记录[{}}]找不到订单", payRecord_u.toString());
 				CurriculumException.cast("根据支付记录找不到订单");
 			}
 			orders.setStatus("600002");//支付成功
-			int b = ordersMapper.updateById(orders);
+			int b = orderMainMapper.updateById(orders);
 			if(b > 0){
 				log.info("更新订单表状态成功,订单号:{}", orderId);
 			}else {

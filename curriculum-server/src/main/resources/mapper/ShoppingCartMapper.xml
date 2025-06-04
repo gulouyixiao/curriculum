@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.curriculum.mapper.ShoppingCartMapper">
+    <sql id="baseColumn">
+        id
+        ,`name`,pic,user_id,shopping_id,`number`,price,vip_price,shopping_type,create_time,remark
+    </sql>
+
+    <select id="listShoppingCartByIds" resultType="com.curriculum.model.vo.ShoppingCartVO">
+        SELECT
+        sc.id,
+        sc.name,
+        sc.pic,
+        sc.user_id,
+        sc.shopping_id,
+        sc.number,
+        sc.price,
+        sc.vip_price,
+        sc.shopping_type,
+        sc.create_time,
+        sc.remark,
+        CASE
+        WHEN sc.shopping_type = #{acgnType} THEN a.price
+        WHEN sc.shopping_type = #{surroundingType} THEN s.price
+        ELSE NULL
+        END AS actual_price
+        FROM
+        shopping_cart sc
+        LEFT JOIN acgn a ON sc.shopping_id = a.id AND sc.shopping_type = #{acgnType}
+        LEFT JOIN surroundings s ON sc.shopping_id = s.id AND sc.shopping_type = #{surroundingType}
+        WHERE
+        sc.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 
 </mapper>

@@ -2,25 +2,22 @@ package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.curriculum.model.dto.OrderParamsDTO;
-import com.curriculum.model.dto.PayParamsDTO;
-import com.curriculum.model.po.Orders;
+import com.curriculum.model.po.OrderMain;
 import com.curriculum.model.po.PayRecord;
 import com.curriculum.model.vo.QrcodeVO;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 订单表 服务类
  */
-public interface OrdersService extends IService<Orders> {
+public interface OrdersService extends IService<OrderMain> {
 
 	/**
 	 * 支付结果通知
 	 * @param request
 	 */
-	Boolean receiveNotify(HttpServletRequest request, String PayType);
+	void receiveNotify(HttpServletRequest request, String PayType);
 
 	/**
 	 * 查询支付结果

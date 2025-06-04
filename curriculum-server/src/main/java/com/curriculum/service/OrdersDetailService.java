@@ -11,6 +11,7 @@ import com.curriculum.model.po.OrdersDetail;
  * @author lxr
  * @since 2025-06-03 18:22:01
  */
-public interface IOrdersDetailService extends IService<OrdersDetail> {
+public interface OrdersDetailService extends IService<OrdersDetail> {
 
+    void saveShoppingCart(ShoppingCart shoppingCart);
 }

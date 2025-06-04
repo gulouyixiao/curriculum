@@ -5,18 +5,20 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
 /**
- * 生成订单二维码参数
+ * 提交订单
  */
 @Data
-@ApiModel(description = "生成订单二维码参数")
+@ApiModel(description = "提交订单")
 public class OrderParamsDTO {
-	@ApiModelProperty(value = "商品类型 acgn,surrounding")
-	private String orderType;
-	@ApiModelProperty(value = "商品id")
-	private Long id;
-	@ApiModelProperty(value = "数量")
-	private Integer number;
-	@ApiModelProperty(value = "价格")
-	private Float price;
+	@ApiModelProperty(value = "购物车商品id集合")
+	@NotEmpty(message = "购物车商品id集合不能为空")
+	private List<Long> cartIdList;
+
+	@ApiModelProperty(value = "总价（沉余参数）")
+	private String totalPrice;
 }

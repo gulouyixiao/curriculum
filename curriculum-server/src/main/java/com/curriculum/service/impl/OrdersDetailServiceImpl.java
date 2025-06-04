@@ -3,7 +3,7 @@ package com.curriculum.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.mapper.OrdersDetailMapper;
 import com.curriculum.model.po.OrdersDetail;
-import com.curriculum.service.IOrdersDetailService;
+import com.curriculum.service.OrdersDetailService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2025-06-03 18:22:01
  */
 @Service
-public class OrdersDetailServiceImpl extends ServiceImpl<OrdersDetailMapper, OrdersDetail> implements IOrdersDetailService {
+public class OrdersDetailServiceImpl extends ServiceImpl<OrdersDetailMapper, OrdersDetail> implements OrdersDetailService {
 
 }

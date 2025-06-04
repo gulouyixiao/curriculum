@@ -5,6 +5,8 @@ import com.curriculum.model.vo.RestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,7 +44,7 @@ public class GlobalExceptionHandler {
    @ResponseBody
    @ExceptionHandler(Exception.class)
    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
- public RestResponse exception(Exception e){
+   public RestResponse exception(Exception e){
     //记录异常
     log.error("系统异常{}",e.getMessage(),e);
     return RestResponse.validfail(MessageConstant.UNKOWN_ERROR);
@@ -58,6 +60,18 @@ public class GlobalExceptionHandler {
         return RestResponse.validfail(MessageConstant.UNKOWN_ERROR);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public RestResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        return RestResponse.validfail(message);
+    }
+
+    @ExceptionHandler(BindException.class)
+    public RestResponse handleBindException(BindException ex) {
+        String message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        return RestResponse.validfail(message);
+    }
+
     @ResponseBody
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,7 +81,6 @@ public class GlobalExceptionHandler {
 
         return RestResponse.validfail(MessageConstant.REQUEST_NULL);
     }
-
 
 
 
