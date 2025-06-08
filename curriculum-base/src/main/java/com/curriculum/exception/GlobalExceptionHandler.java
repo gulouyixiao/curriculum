@@ -60,13 +60,8 @@ public class GlobalExceptionHandler {
         return RestResponse.validfail(MessageConstant.UNKOWN_ERROR);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public RestResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldError().getDefaultMessage();
-        return RestResponse.validfail(message);
-    }
-
     @ExceptionHandler(BindException.class)
+    @ResponseBody
     public RestResponse handleBindException(BindException ex) {
         String message = ex.getBindingResult().getFieldError().getDefaultMessage();
         return RestResponse.validfail(message);

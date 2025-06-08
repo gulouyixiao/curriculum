@@ -19,7 +19,6 @@ import com.curriculum.constant.OrderConstant;
 import com.curriculum.context.AuthenticationContext;
 import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
-import com.curriculum.mapper.OrdersMapper;
 import com.curriculum.model.dto.OrderParamsDTO;
 import com.curriculum.model.dto.PayStatusDTO;
 import com.curriculum.model.po.*;
@@ -50,7 +49,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> implements OrdersService {
+public class OrdersServiceImpl  implements OrdersService {
 	private final PayRecordService payRecordService;
 	private final AlipayProperties alipayConfig;
 	private final UserService userService;

@@ -7,8 +7,6 @@ import com.curriculum.constant.MessageConstant;
 import com.curriculum.constant.OrderConstant;
 import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
-import com.curriculum.mapper.OrderMainMapper;
-import com.curriculum.mapper.OrdersMapper;
 import com.curriculum.mapper.PayRecordMapper;
 import com.curriculum.model.dto.PayStatusDTO;
 import com.curriculum.model.po.OrderMain;
