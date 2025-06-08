@@ -5,7 +5,7 @@ import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.AcgnService;
-import com.curriculum.service.IShoppingCartService;
+import com.curriculum.service.ShoppingCartService;
 import com.curriculum.service.SurroundingsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -24,7 +23,7 @@ import java.util.Objects;
 public class ShoppingCartController {
 
     @Autowired
-    private IShoppingCartService shoppingCartService;
+    private ShoppingCartService shoppingCartService;
 
     @Autowired
     private SurroundingsService surroundingsService;
