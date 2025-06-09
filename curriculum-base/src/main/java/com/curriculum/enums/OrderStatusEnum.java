@@ -12,9 +12,9 @@ import lombok.Getter;
 public enum OrderStatusEnum {
     UNPAID("600001", "待支付"),
     PAID("600002", "已支付"),
-    CLOSED("600003", "已关闭"),
+    CLOSED("600003", "超时结束"),
     REFUNDED("600004", "已退款"),
-    COMPLETED("600005", "已完成");
+    COMPLETED("600005", "待退款");
 
     private final String code;
     private final String desc;

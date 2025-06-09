@@ -34,11 +34,15 @@ public class UserCheckCodeServiceImpl implements UserCheckCodeService {
 		String type = checkCodeParamsDto.getCheckCodeType();
 		String beanName = type + "_CheckCodeService";
 		//从spring容器取出指定类型的bean
-		CheckCodeService checkCodeService = applicationContext.getBean(beanName, CheckCodeService.class);
+		CheckCodeService checkCodeService = null;
+		try{
+			checkCodeService = applicationContext.getBean(beanName, CheckCodeService.class);
+		}catch (Exception e){
+			log.info("错误验证码类型: type:{}",type);
+			CurriculumException.cast(MessageConstant.REQUEST_NULL);
+		}
 
-		CheckCodeResult checkCodeResult = checkCodeService.execute(checkCodeParamsDto);
-
-		return checkCodeResult;
+        return checkCodeService.execute(checkCodeParamsDto);
 
 	}
 

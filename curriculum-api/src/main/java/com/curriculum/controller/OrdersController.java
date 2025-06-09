@@ -65,10 +65,9 @@ public class OrdersController {
 
     @PostMapping("/curriculum/order/submit")
     @ApiOperation(value = "提交订单")
-    public RestResponse AlipayCode(@Valid @RequestBody OrderParamsDTO orderParamsDTO) throws Exception {
+    public RestResponse submitOrder(@Valid @RequestBody OrderParamsDTO orderParamsDTO) throws Exception {
         log.info("提交订单：{}",orderParamsDTO);
         return RestResponse.success(ordersService.createCode(orderParamsDTO));
-
     }
 
     @ApiOperation("查看历史订单")

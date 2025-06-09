@@ -53,7 +53,7 @@ public class PayRecord implements Serializable {
     /**
      * 订单总价单位元
      */
-    private Float totalPrice;
+    private Double totalPrice;
 
     /**
      * 币种CNY

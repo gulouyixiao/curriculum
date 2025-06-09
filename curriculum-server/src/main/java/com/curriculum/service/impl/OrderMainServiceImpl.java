@@ -1,8 +1,6 @@
 package com.curriculum.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
 import com.curriculum.enums.OrderStatusEnum;
@@ -87,6 +85,24 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
 
         ordersDetailService.saveBatch(ordersDetailList);
         return  orderMain;
+    }
+
+    /**
+     * 更新订单状态
+     * @param orderMain
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateOrderStatus(OrderMain orderMain) {
+        // 更新主订单
+        this.updateById(orderMain);
+
+        // 跟新子订单
+        LambdaUpdateWrapper<OrdersDetail> updateWrapper = new LambdaUpdateWrapper<OrdersDetail>()
+                .eq(OrdersDetail::getMainId, orderMain.getId())
+                .set(OrdersDetail::getStatus, orderMain.getStatus());
+
+        ordersDetailService.update(updateWrapper);
     }
 
     //用于订单页面的查询

@@ -13,19 +13,15 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
 import com.curriculum.constant.OrderConstant;
 import com.curriculum.context.AuthenticationContext;
+import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
-import com.curriculum.mapper.OrderMainMapper;
-import com.curriculum.mapper.OrdersMapper;
-import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.dto.OrderParamsDTO;
 import com.curriculum.model.dto.PayStatusDTO;
 import com.curriculum.model.po.*;
-import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.QrcodeVO;
 import com.curriculum.model.vo.ShoppingCartVO;
 import com.curriculum.properties.AlipayProperties;
@@ -34,7 +30,6 @@ import com.curriculum.utils.EncryptUtil;
 import com.curriculum.utils.QrCodeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +37,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,13 +49,12 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> implements OrdersService {
+public class OrdersServiceImpl  implements OrdersService {
 	private final PayRecordService payRecordService;
 	private final AlipayProperties alipayConfig;
 	private final UserService userService;
 	private final ShoppingCartService shoppingCartService;
 	private final OrderMainService orderMainService;
-	private final OrderMainMapper orderMainMapper;
 
 
 	/**
@@ -119,8 +112,6 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		receiveNotify(request);
 	}
 
-
-
 	/**
 	 * 请求支付宝查询支付结果
 	 *
@@ -128,17 +119,15 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	 * @return 支付记录信息
 	 */
 	public PayRecord queryPayResult(PayRecord payRecord) {
-		//支付状态
-		String status = payRecord.getStatus();
-		//如果支付成功直接返回
-		if ("600002".equals(status)) {
-			return payRecord;
+		// 1.支付状态检验
+		if (!OrderStatusEnum.UNPAID.getCode().equals(payRecord.getStatus())) {
+			return payRecord; //如果支付状态不在待支付直接返回
 		}
-		//从支付宝查询支付结果
+		// 2.从支付宝查询支付结果
 		PayStatusDTO payStatusDto = queryPayResultFromAlipay(String.valueOf(payRecord.getPayNo()));
-		//保存支付结果
+		// 3.保存支付结果
 		payRecordService.savePayStatus(payStatusDto);
-		//重新查询支付记录
+		// 4.查询最新记录
 		LambdaQueryWrapper<PayRecord> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(PayRecord::getPayNo, payRecord.getPayNo());
 		payRecord = payRecordService.getOne(queryWrapper);
@@ -152,7 +141,30 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 	 * @return 支付结果
 	 */
 	public PayStatusDTO queryPayResultFromAlipay(String payNo) {
-		//========请求支付宝查询支付结果=============
+		// 1，请求支付宝查询支付结果
+		Map responseMap = alipayTradeQueryResponse(payNo);
+		String trade_status = (String) responseMap.get("trade_status");
+		String total_amount = (String) responseMap.get("total_amount");
+		String trade_no = (String) responseMap.get("trade_no");
+
+		// 2.保存支付结果
+		PayStatusDTO payStatusDto = new PayStatusDTO();
+		payStatusDto.setOut_trade_no(payNo);
+		payStatusDto.setTrade_status(trade_status);
+		payStatusDto.setApp_id(alipayConfig.appId);
+		payStatusDto.setTrade_no(trade_no);
+		payStatusDto.setTotal_amount(total_amount);
+		payStatusDto.setPay_method(2);
+		return payStatusDto;
+	}
+
+
+	/**
+	 * 请求支付宝查询支付结果
+	 * @param payNo
+	 * @return
+	 */
+	private Map alipayTradeQueryResponse(String payNo) {
 		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId, alipayConfig.appPrivateKey, "json", alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType); //获得初始化的AlipayClient
 		AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
 		JSONObject bizContent = new JSONObject();
@@ -162,34 +174,17 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		try {
 			response = alipayClient.execute(request);
 			if (!response.isSuccess()) {
-				CurriculumException.cast("请求支付查询查询失败");
+				CurriculumException.cast(MessageConstant.REQUEST_PAY_QUERY_FAILED);
 			}
 		} catch (AlipayApiException e) {
 			log.error("请求支付宝查询支付结果异常:{}", e.toString(), e);
-			CurriculumException.cast("请求支付查询查询失败");
+			CurriculumException.cast(MessageConstant.REQUEST_PAY_QUERY_FAILED);
 		}
 
-		//获取支付结果
 		String resultJson = response.getBody();
 
-		//转map
 		Map resultMap = JSON.parseObject(resultJson, Map.class);
-		Map alipay_trade_query_response = (Map) resultMap.get("alipay_trade_query_response");
-
-
-		//支付结果
-		String trade_status = (String) alipay_trade_query_response.get("trade_status");
-		String total_amount = (String) alipay_trade_query_response.get("total_amount");
-		String trade_no = (String) alipay_trade_query_response.get("trade_no");
-		//保存支付结果
-		PayStatusDTO payStatusDto = new PayStatusDTO();
-		payStatusDto.setOut_trade_no(payNo);
-		payStatusDto.setTrade_status(trade_status);
-		payStatusDto.setApp_id(alipayConfig.appId);
-		payStatusDto.setTrade_no(trade_no);
-		payStatusDto.setTotal_amount(total_amount);
-		payStatusDto.setPay_method(2);
-		return payStatusDto;
+		return (Map) resultMap.get("alipay_trade_query_response");
 	}
 
 
@@ -244,17 +239,17 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 				payStatusDto.setPay_method(2);//1微信支付 2支付宝支付
 
 				//交易成功处理
-				if (trade_status.equals("TRADE_SUCCESS")) {
+				if (trade_status.equals(OrderConstant.TRADE_SUCCESS)) {
 					payStatusDto.setTrade_status(trade_status);
 					result = true;
 				} else {
-					payStatusDto.setTrade_status("TRADE_FALSE");
+					payStatusDto.setTrade_status(OrderConstant.TRADE_FALSE);
 					result = false;
 				}
 				//修改订单支付记录表状态和订单支付状态
 				payRecordService.savePayStatus(payStatusDto);
 			} catch (UnsupportedEncodingException e) {
-				log.error("获取支付宝数据错误：{}", e.getMessage());
+				log.error("获取支付宝数据错误", e);
 			}
 		} else {
 			log.error("支付宝验签错误：verify_result: {}", verify_result);
@@ -306,6 +301,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, OrderMain> impl
 		}
 
 		bizContent.put("subject", orderName); // 设置订单标题
+		// 设置 10 分钟超时关闭（必须是 m 表示分钟）
+		bizContent.put("timeout_express", OrderConstant.TIMEOUT_EXPRESS);
 
 		// 设置扫码支付的产品码
 		bizContent.put("product_code", "FACE_TO_FACE_PAYMENT");

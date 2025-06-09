@@ -14,7 +14,7 @@ import javax.validation.Valid;
 /**
  * 订单表 服务类
  */
-public interface OrdersService extends IService<OrderMain> {
+public interface OrdersService{
 
 	/**
 	 * 支付结果通知

@@ -5,7 +5,7 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost/test?serverTimezone=UTC&userUnicode=true&useSSL=false&
+    url: ${spring.datasource.url}
     username: ${spring.datasource.username}
     password: ${spring.datasource.password}
     druid:
@@ -14,11 +14,13 @@ spring:
       test-while-idle: true
       validation-query: SELECT 1
   redis:
-    host: localhost
-    port: 6379
+    host: ${redis.host}
+    port: ${redis.port}
     password: ${redis.password}
-    database: 10
+    database: ${redis.database}
 
+  profiles:
+    active: local
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -49,13 +51,13 @@ curriculum:
     user-secret-key: ${curriculum.jwt.user-secret-key}
     user-ttl: ${curriculum.jwt.user-ttl}
     user-token-name: ${curriculum.jwt.user-token-name}
-aliyun:
-  sms:
-    accessKeyId: ${aliyun.sms.accessKeyId}
-    accessKeySecret: ${aliyun.sms.accessKeySecret}
-    endpoint: ${aliyun.sms.endpoint}
-    signName: ${aliyun.sms.signName}
-    smsCodeTemplateCode: ${aliyun.sms.smsCodeTemplateCode}
+  aliyun:
+    sms:
+      accessKeyId: ${curriculum.aliyun.sms.accessKeyId}
+      accessKeySecret: ${curriculum.aliyun.sms.accessKeySecret}
+      endpoint: ${curriculum.aliyun.sms.endpoint}
+      signName: ${curriculum.aliyun.sms.signName}
+      smsCodeTemplateCode: ${curriculum.aliyun.sms.smsCodeTemplateCode}
 
 alipay:
   pay:

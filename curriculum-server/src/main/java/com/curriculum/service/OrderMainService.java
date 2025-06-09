@@ -1,14 +1,11 @@
 package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.po.OrderMain;
 import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.model.po.User;
-import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.ShoppingCartVO;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -30,4 +27,10 @@ public interface OrderMainService extends IService<OrderMain> {
     OrderMain submitOrder(List<ShoppingCartVO> shoppingCartVOList, User user);
 
     PageResult PageQuery(@Valid OrderDTO orderDTO);
+    /**
+     * 更新订单状态
+     * @param orderMain
+     */
+    void updateOrderStatus(OrderMain orderMain);
+
 }

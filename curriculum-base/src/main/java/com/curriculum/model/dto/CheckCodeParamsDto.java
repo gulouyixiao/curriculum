@@ -1,5 +1,9 @@
 package com.curriculum.model.dto;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 /**
@@ -11,6 +15,7 @@ public class CheckCodeParamsDto {
     /**
      * 验证码类型:pic、sms、email等
      */
+    @ApiModelProperty(value = "验证码类型:pic、sms、email等")
     private String checkCodeType;
 
     /**
