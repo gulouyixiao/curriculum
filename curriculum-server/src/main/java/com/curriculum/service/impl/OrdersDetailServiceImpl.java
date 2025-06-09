@@ -3,6 +3,7 @@ package com.curriculum.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.mapper.OrdersDetailMapper;
 import com.curriculum.model.po.OrdersDetail;
+import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.service.OrdersDetailService;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrdersDetailServiceImpl extends ServiceImpl<OrdersDetailMapper, OrdersDetail> implements OrdersDetailService {
 
+//    @Override
+//    public void saveShoppingCart(ShoppingCart shoppingCart) {
+//
+//    }
 }

@@ -13,5 +13,5 @@ import com.curriculum.model.po.OrdersDetail;
  */
 public interface OrdersDetailService extends IService<OrdersDetail> {
 
-    void saveShoppingCart(ShoppingCart shoppingCart);
+//    void saveShoppingCart(ShoppingCart shoppingCart);
 }

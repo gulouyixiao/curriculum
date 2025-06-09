@@ -41,8 +41,8 @@ public class OrdersController {
     @Autowired
     private OrderMainService orderMainService;
 
-    @Autowired
-    private OrderDetail orderDetail;
+//    @Autowired
+//    private OrderDetail orderDetail;
     @Autowired
     private OrdersDetailService ordersDetailService;
 
