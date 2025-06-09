@@ -48,7 +48,7 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
         Long userId = AuthenticationContext.getContext();
 
         //商品类型前端传入了
-        if (Objects.equals(shoppingCart.getShoppingType(), "1")){
+        if (Objects.equals(shoppingCart.getShoppingType(), "01")){
             Surroundings surroundings = surroundingsService.getById(shopID);
             shoppingCart.setName(surroundings.getTitle());
             shoppingCart.setPic(surroundings.getPic());
@@ -57,7 +57,7 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
             shoppingCart.setVipPrice(Double.valueOf(surroundings.getVipPrice()));
             shoppingCart.setPrice(Double.valueOf(surroundings.getPrice()));
             shoppingCartMapper.insert(shoppingCart);
-        }else if (Objects.equals(shoppingCart.getShoppingType(), "0")){
+        }else if (Objects.equals(shoppingCart.getShoppingType(), "02")){
             Acgn surroundings = acgnService.getById(shopID);
             shoppingCart.setName(surroundings.getTitle());
             shoppingCart.setPic(surroundings.getPic());
