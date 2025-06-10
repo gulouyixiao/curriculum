@@ -25,17 +25,12 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring Boot 集成 log4j2 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.github.penggle</groupId>
             <artifactId>kaptcha</artifactId>
             <version>2.3.2</version>
         </dependency>
+
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
@@ -61,7 +56,6 @@
             <artifactId>redisson-spring-boot-starter</artifactId>
             <version>3.16.7</version>
         </dependency>
-
 
         <!-- mybatis plus的依赖 -->
         <dependency>
@@ -92,7 +86,6 @@
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
-            <version>5.3.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -106,7 +99,6 @@
             <version>2.5.1</version>
         </dependency>
 
-
         <!--        阿里云短信验证-->
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -114,6 +106,10 @@
             <version>3.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
 
     </dependencies>
 

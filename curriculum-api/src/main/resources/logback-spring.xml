@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- 自定义统一日志格式 -->
+    <property name="CUSTOM_LOG_PATTERN"
+              value="|%date{yyyy-MM-dd HH:mm:ss.SSS}|%-5p|%t %c{5} %M %L|%X{XTJC}|%X{preTransactionSerialNumber:-}|%X{transactionSerialNumber:-}|%X{traceId:-}|%X{spanId:-}|%m%n"/>
+
+    <!-- 从Spring Context获取变量 -->
+    <springProperty name="app.name" scope="context" source="spring.application.name" defaultValue="app"/>
+    <springProperty name="log.file" scope="context" source="logging.file"/>
+    <springProperty name="log.path" scope="context" source="logging.path"/>
+
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CUSTOM_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 文件输出配置 -->
+    <property name="FILE_INFO_PATH" value="${log.path:-${user.home}/logs/${app.name}}"/>
+    <property name="FILE_INFO_NAME" value="${log.file:-${app.name}.log}"/>
+    <property name="FILE_INFO_FILE" value="${FILE_INFO_PATH}/${FILE_INFO_NAME}"/>
+
+    <appender name="FILE_INFO_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_INFO_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${FILE_INFO_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CUSTOM_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+
+    <!--本地环境-->
+    <springProfile name="local">
+        <logger name="com.curriculum" level="INFO" />
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="DEBUG"/>
+        <logger name="com.baomidou.mybatisplus" level="DEBUG"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_INFO_APPENDER"/>
+        </root>
+    </springProfile>
+
+    <!--PROD 环境-->
+    <springProfile name="prod">
+        <logger name="com.curriculum" level="INFO" />
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="INFO"/>
+        <logger name="com.baomidou.mybatisplus" level="INFO"/>
+
+        <root level="INFO">
+            <appender-ref ref="FILE_INFO_APPENDER"/>
+        </root>
+    </springProfile>
+</configuration>

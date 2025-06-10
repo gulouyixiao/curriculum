@@ -284,7 +284,10 @@ public class OrdersServiceImpl  implements OrdersService {
 	 * @return 结果
 	 */
 	private String requestPay(PayRecord payRecord) {
-		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId, alipayConfig.appPrivateKey, alipayConfig.format, alipayConfig.charset, alipayConfig.alipayPublicKey, alipayConfig.signType);
+		AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.url, alipayConfig.appId,
+				alipayConfig.appPrivateKey, alipayConfig.format, alipayConfig.charset,
+				alipayConfig.alipayPublicKey, alipayConfig.signType);
+
 		// 创建扫码支付请求
 		AlipayTradePrecreateRequest alipayRequest = new AlipayTradePrecreateRequest(); // 创建API对应的request
 		alipayRequest.setNotifyUrl(alipayConfig.notifyurl); // 设置回调通知地址
@@ -314,9 +317,9 @@ public class OrdersServiceImpl  implements OrdersService {
 				// 获取二维码链接
 				return response.getQrCode();
 			}
-			log.error("生成二维码失败：{}", response.getSubMsg());
+			log.info("生成二维码失败：{}", response.getSubMsg());
 		} catch (AlipayApiException e) {
-			log.error("调用支付宝下单接口错误：{}", alipayRequest, e);
+			log.info("调用支付宝下单接口错误：{}", alipayRequest, e);
 		}
 		CurriculumException.cast(OrderConstant.REQUEST_PAY_ERROR);
 		return null;

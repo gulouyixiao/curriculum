@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @description 支付宝配置参数
  */
 @Component
-@ConfigurationProperties(prefix = "curriculum.alipay.pay")
+@ConfigurationProperties(prefix = "alipay.pay")
 @Data
 public class AlipayProperties {
 	public String appId;

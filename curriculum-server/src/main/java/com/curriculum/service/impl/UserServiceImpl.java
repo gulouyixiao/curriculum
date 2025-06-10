@@ -49,7 +49,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 */
 	public UserLoginVO login(UserLoginDTO userLoginDTO){
 		//验证码校验
-		userCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
+
+		// todo 测试不验证
+//		userCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
 
 		String username = userLoginDTO.getUsername();
 		String password = userLoginDTO.getPassword();
@@ -102,7 +104,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		//前置校验
 		loginPreCheck(userRegisterDTO.getUsername(),userRegisterDTO.getPassword());
 
-		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
+		// todo 测试不验证
+//		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
 
 		LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(User::getCellphone,userRegisterDTO.getCellphone());

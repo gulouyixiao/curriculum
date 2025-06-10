@@ -1,10 +1,8 @@
 package com.curriculum.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.*;
 import com.curriculum.model.po.VideoBase;
-import com.curriculum.model.po.VideoComments;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.model.vo.VideoVo;
@@ -209,7 +207,5 @@ public class VideoBaseController {
         VideoBase videoVo = videoBaseService.videovie(id);
         return RestResponse.success(videoVo,"查询成功");
     }
-
-
 
 }
