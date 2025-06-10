@@ -91,7 +91,4 @@ public class ShoppingCart implements Serializable {
      */
     @TableField("remark")
     private String remark;
-
-    @TableField("Title")
-    private String Title;
 }
