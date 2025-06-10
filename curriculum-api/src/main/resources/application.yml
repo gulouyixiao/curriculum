@@ -37,6 +37,11 @@ springfox:
 server:
   port: 10101
 
+logging:
+  file:
+    path: ${logging.config.file.path:./log}
+
+
 minio:
   endpoint: ${minio.endpoint}
   accessKey: ${minio.accessKey}

@@ -14,7 +14,6 @@ import com.curriculum.model.vo.UserLoginVO;
 import com.curriculum.properties.JwtProperties;
 import com.curriculum.service.UserCheckCodeService;
 import com.curriculum.service.UserService;
-import com.curriculum.utils.CheckCodeUtils;
 import com.curriculum.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	@Autowired
 	private UserCheckCodeService userCheckCodeService;
 	@Autowired
-	JwtProperties jwtProperties;
+	private JwtProperties jwtProperties;
 	/**
 	 * 登录
 	 * @param userLoginDTO
@@ -51,7 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		//验证码校验
 
 		// todo 测试不验证
-//		userCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
+		userCheckCodeService.verify(userLoginDTO.getKey(),userLoginDTO.getCode());
 
 		String username = userLoginDTO.getUsername();
 		String password = userLoginDTO.getPassword();
@@ -105,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		loginPreCheck(userRegisterDTO.getUsername(),userRegisterDTO.getPassword());
 
 		// todo 测试不验证
-//		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
+		userCheckCodeService.verify(userRegisterDTO.getKey(),userRegisterDTO.getCode());
 
 		LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(User::getCellphone,userRegisterDTO.getCellphone());
