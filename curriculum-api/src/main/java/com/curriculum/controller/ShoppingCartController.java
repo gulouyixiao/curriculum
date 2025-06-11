@@ -45,6 +45,16 @@ public class ShoppingCartController {
         return RestResponse.success();
     }
 
+    @ApiOperation("批量删除")
+    @PostMapping("/deletelist")
+    public RestResponse<String> deletelist(@RequestBody List<Integer> ids) {
+//        for (Integer id : ids) {
+//            shoppingCartService.removeById(id);
+//        }
+        shoppingCartService.removeByIds(ids);
+        return RestResponse.success();
+    }
+
     @ApiOperation("获取购物车信息")
     @GetMapping("list")
     public RestResponse<List<ShoppingCart>> list() {
@@ -82,4 +92,6 @@ public class ShoppingCartController {
         shoppingCartService.changeNumber(shoppingCatChangeDTO);
         return RestResponse.success();
     }
+
+
 }

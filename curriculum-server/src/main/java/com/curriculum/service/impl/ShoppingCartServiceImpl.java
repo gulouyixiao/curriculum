@@ -150,7 +150,7 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
 //        }
         if (shoppingCatChangeDTO.getNumber() > 0){
             ShoppingCart shoppingCart = this.getById(shoppingCatChangeDTO.getId());
-            shoppingCart.setNumber(shoppingCart.getNumber());
+            shoppingCart.setNumber(shoppingCatChangeDTO.getNumber());
             shoppingCartMapper.updateById(shoppingCart);
         }else {
             this.removeById(shoppingCatChangeDTO.getId());
@@ -162,6 +162,15 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
         return shoppingCartMapper.listShoppingCartByIds(ids,
                 ProductTypeEnum.EXPO_PERFORMANCE.getCode(),
                 ProductTypeEnum.PERIPHERAL.getCode());
+    }
+
+    @Override
+    public List<ShoppingCart>  list(){
+        List<ShoppingCart> list = this.lambdaQuery()
+                .eq(ShoppingCart::getUserId, AuthenticationContext.getContext())
+                .list();
+
+        return list;
     }
 
 }

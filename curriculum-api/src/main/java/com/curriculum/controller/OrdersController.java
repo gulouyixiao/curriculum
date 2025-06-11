@@ -25,7 +25,6 @@ import javax.validation.Valid;
 /**
  * 订单表 前端控制器
  */
-
 //@Anonymous
 @Slf4j
 @RestController
@@ -68,10 +67,11 @@ public class OrdersController {
         return RestResponse.success(ordersService.createCode(orderParamsDTO));
     }
 
-
+//    @Anonymous
 //    TODO 这个地方要加order
     @ApiOperation("查看历史订单")
     @PostMapping("order/listPage")
+    @Anonymous
     public RestResponse listPage(@Valid @RequestBody OrderDTO orderDTO) throws Exception {
         log.info("{}",orderDTO.getPage().getClass());
         PageResult result = orderMainService.PageQuery(orderDTO);

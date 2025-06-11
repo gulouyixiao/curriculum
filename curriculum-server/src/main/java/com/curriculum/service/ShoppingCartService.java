@@ -26,4 +26,6 @@ public interface ShoppingCartService extends IService<ShoppingCart> {
     void saveShoppingCart(ShoppingCart shoppingCart);
 
     void changeNumber(ShoppingCatChangeDTO shoppingCatChangeDTO);
+
+    List<ShoppingCart>  list();
 }
