@@ -1,6 +1,7 @@
 package com.curriculum.controller;
 
 
+import com.curriculum.model.dto.ShoppingCatChangeDTO;
 import com.curriculum.model.po.Acgn;
 import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.model.po.Surroundings;
@@ -73,5 +74,12 @@ public class ShoppingCartController {
         }
         return RestResponse.validfail("不合法的类型");
 //        return RestResponse.success(shoppingCart);
+    }
+
+    @ApiOperation("购物车增加/减少数量")
+    @PostMapping("/changeNumber")
+    public RestResponse<String> change(@RequestBody ShoppingCatChangeDTO shoppingCatChangeDTO) {
+        shoppingCartService.changeNumber(shoppingCatChangeDTO);
+        return RestResponse.success();
     }
 }

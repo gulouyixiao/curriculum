@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.curriculum.constant.MessageConstant;
+import com.curriculum.context.AuthenticationContext;
 import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.OrderMainMapper;
@@ -126,7 +127,7 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
         if (orderDTO.getStatus() != null && !orderDTO.getStatus().isEmpty()) {
             queryWrapper.eq(OrderMain::getStatus, orderDTO.getStatus());
         }
-
+        queryWrapper.eq(OrderMain::getUserId, AuthenticationContext.getContext());
         // 分页查询
         Page<OrderMain> page = new Page<>(orderDTO.getPage(), orderDTO.getPageSize());
         Page<OrderMain> orderPage = orderMainMapper.selectPage(page, queryWrapper);

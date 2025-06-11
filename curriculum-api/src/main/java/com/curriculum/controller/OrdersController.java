@@ -10,6 +10,7 @@ import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.OrderMainService;
 import com.curriculum.service.OrdersDetailService;
 import com.curriculum.service.OrdersService;
+import com.sun.xml.bind.v2.TODO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,8 @@ import javax.validation.Valid;
 /**
  * 订单表 前端控制器
  */
+
+//@Anonymous
 @Slf4j
 @RestController
 @RequestMapping("/api/curriculum")
@@ -65,10 +68,12 @@ public class OrdersController {
         return RestResponse.success(ordersService.createCode(orderParamsDTO));
     }
 
-    @ApiOperation("查看历史订单")
-    @PostMapping("/listPage")
-    public RestResponse listPage(@Valid @RequestBody OrderDTO orderDTO) throws Exception {
 
+//    TODO 这个地方要加order
+    @ApiOperation("查看历史订单")
+    @PostMapping("order/listPage")
+    public RestResponse listPage(@Valid @RequestBody OrderDTO orderDTO) throws Exception {
+        log.info("{}",orderDTO.getPage().getClass());
         PageResult result = orderMainService.PageQuery(orderDTO);
         return RestResponse.success(result);
     }

@@ -1,6 +1,7 @@
 package com.curriculum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.curriculum.model.dto.ShoppingCatChangeDTO;
 import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.model.vo.ShoppingCartVO;
 
@@ -24,4 +25,5 @@ public interface ShoppingCartService extends IService<ShoppingCart> {
 
     void saveShoppingCart(ShoppingCart shoppingCart);
 
+    void changeNumber(ShoppingCatChangeDTO shoppingCatChangeDTO);
 }
