@@ -25,6 +25,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * 注册自定义拦截器
      * @param registry
      */
+    @Override
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
 
@@ -40,6 +41,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * 设置静态资源映射，主要是访问接口文档（html、js、css）
      * @param registry
      */
+    @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         log.info("开始设置静态资源映射...");
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
@@ -53,7 +55,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
+    protected void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/swagger-ui/")
                 .setViewName("forward:/swagger-ui/index.html");
     }
@@ -62,6 +64,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * 扩展Spring MVC框架的消息转化器
      * @param converters
      */
+    @Override
     protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.info("扩展消息转换器...");
         //创建一个消息转换器对象
@@ -73,7 +76,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    protected void addCorsMappings(CorsRegistry registry) {
         //添加映射路径
         registry.addMapping("/**")
                 //是否发送Cookie

@@ -58,7 +58,7 @@ public class OrdersController {
         return RestResponse.success(payRecord);
     }
 
-    @PostMapping("/curriculum/order/submit")
+    @PostMapping("/order/submit")
     @ApiOperation(value = "提交订单")
     public RestResponse submitOrder(@Valid @RequestBody OrderParamsDTO orderParamsDTO) throws Exception {
         log.info("提交订单：{}",orderParamsDTO);

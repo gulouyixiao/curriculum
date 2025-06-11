@@ -1,7 +1,6 @@
 package com.curriculum.controller;
 
 
-import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.po.Acgn;
 import com.curriculum.model.po.ShoppingCart;
 import com.curriculum.model.po.Surroundings;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Objects;
 
-@Anonymous
 @Slf4j
 @RestController
 @RequestMapping("/api/curriculum/cart/")

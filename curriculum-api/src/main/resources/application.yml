@@ -20,7 +20,7 @@ spring:
     database: ${redis.database}
 
   profiles:
-    active: local
+    active:  ${SPRING_PROFILES_ACTIVE:dev}
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -28,7 +28,6 @@ spring:
     multipart:
       max-file-size: 1000MB
       max-request-size: 1000MB
-# mail 配置保持注释
 
 springfox:
   documentation:

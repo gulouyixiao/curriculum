@@ -31,6 +31,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		//检查是否是方法级处理器
+		log.info("JwtTokenInterceptor 拦截请求: {}", request.getRequestURI());
 		if(handler instanceof HandlerMethod){
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 

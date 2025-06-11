@@ -52,6 +52,19 @@
         </root>
     </springProfile>
 
+    <!--测试环境-->
+    <springProfile name="dev">
+        <logger name="com.curriculum" level="DEBUG" />
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="DEBUG"/>
+        <logger name="com.baomidou.mybatisplus" level="DEBUG"/>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_INFO_APPENDER"/>
+        </root>
+    </springProfile>
+
     <!--PROD 环境-->
     <springProfile name="prod">
         <logger name="com.curriculum" level="INFO" />
