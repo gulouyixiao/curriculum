@@ -10,6 +10,7 @@ import com.curriculum.context.AuthenticationContext;
 import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
 import com.curriculum.mapper.OrderMainMapper;
+import com.curriculum.mapper.OrdersDetailMapper;
 import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.po.OrderMain;
 import com.curriculum.model.po.OrdersDetail;
@@ -18,6 +19,7 @@ import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.ShoppingCartVO;
 import com.curriculum.service.OrderMainService;
 import com.curriculum.service.OrdersDetailService;
+import com.curriculum.service.OrdersService;
 import com.curriculum.utils.SnowFlakeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -45,6 +48,9 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
 
     @Autowired
     private OrderMainMapper orderMainMapper;
+
+    @Autowired
+    private OrdersDetailMapper ordersDetailMapper;
     /**
      * 提交订单
      * @param shoppingCartVOList 购物车商品
@@ -111,7 +117,7 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
 
     //用于订单页面的查询
     @Override
-    public PageResult<OrderMain> PageQuery(OrderDTO orderDTO) {
+    public PageResult<OrdersDetail> PageQuery(OrderDTO orderDTO) {
         // 参数校验
         if (orderDTO.getPage() == null || orderDTO.getPage() < 1) {
             orderDTO.setPage(1L); // 设置默认页码
@@ -129,9 +135,47 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
         }
         queryWrapper.eq(OrderMain::getUserId, AuthenticationContext.getContext());
 //        queryWrapper.eq(OrderMain::getUserId,"1932385841532006401");
-        // 分页查询
-        Page<OrderMain> page = new Page<>(orderDTO.getPage(), orderDTO.getPageSize());
-        Page<OrderMain> orderPage = orderMainMapper.selectPage(page, queryWrapper);
+
+        // 打印用户ID用于调试
+        System.out.println("当前用户ID: " + AuthenticationContext.getContext());
+
+        // 查询符合条件的订单ID列表
+        List<Long> mainIds = orderMainMapper.selectObjs(queryWrapper.select(OrderMain::getId))
+                .stream()
+                .map(id -> Long.parseLong(id.toString()))
+                .collect(Collectors.toList());
+
+        // 打印查询到的订单ID数量用于调试
+        System.out.println("查询到的订单ID数量: " + mainIds.size());
+        System.out.println("订单ID列表: " + mainIds);
+
+        // 构建订单详情查询条件
+        LambdaQueryWrapper<OrdersDetail> queryWrapper1 = new LambdaQueryWrapper<>();
+
+        // 查询mainId在mainIds列表中的订单详情
+        if (!mainIds.isEmpty()) {
+            queryWrapper1.in(OrdersDetail::getMainId, mainIds);
+            System.out.println("已设置mainId查询条件");
+        } else {
+            // 如果没有订单ID，返回空结果
+            System.out.println("没有找到符合条件的订单ID，返回空结果");
+            return new PageResult<>(
+                    Collections.emptyList(), // 空数据列表
+                    0L,                      // 总记录数为0
+                    orderDTO.getPage(),      // 当前页码
+                    orderDTO.getPageSize()   // 每页大小
+            );
+        }
+
+        // 设置分页参数
+        Page<OrdersDetail> page = new Page<>(orderDTO.getPage(), orderDTO.getPageSize());
+
+        // 执行查询并打印SQL日志
+        Page<OrdersDetail> orderPage = ordersDetailMapper.selectPage(page, queryWrapper1);
+
+        // 打印查询结果数量
+        System.out.println("查询到的订单详情数量: " + orderPage.getRecords().size());
+        System.out.println("总记录数: " + orderPage.getTotal());
 
         // 构建分页结果
         return new PageResult<>(
@@ -141,4 +185,5 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
                 orderDTO.getPageSize()  // 每页大小
         );
     }
+
 }
