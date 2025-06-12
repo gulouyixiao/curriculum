@@ -9,14 +9,12 @@ import com.curriculum.constant.MessageConstant;
 import com.curriculum.context.AuthenticationContext;
 import com.curriculum.enums.OrderStatusEnum;
 import com.curriculum.exception.CurriculumException;
-import com.curriculum.mapper.OrderMainMapper;
-import com.curriculum.mapper.OrdersDetailMapper;
+import com.curriculum.mapper.*;
 import com.curriculum.model.dto.OrderDTO;
-import com.curriculum.model.po.OrderMain;
-import com.curriculum.model.po.OrdersDetail;
-import com.curriculum.model.po.User;
+import com.curriculum.model.po.*;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.ShoppingCartVO;
+import com.curriculum.model.vo.orderMainVO;
 import com.curriculum.service.OrderMainService;
 import com.curriculum.service.OrdersDetailService;
 import com.curriculum.service.OrdersService;
@@ -28,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -51,6 +51,12 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
 
     @Autowired
     private OrdersDetailMapper ordersDetailMapper;
+
+    @Autowired
+    private SurroundingsMapper surroundingsMapper;
+
+    @Autowired
+    private AcgnMapper acgnMapper;
     /**
      * 提交订单
      * @param shoppingCartVOList 购物车商品
@@ -117,24 +123,23 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
 
     //用于订单页面的查询
     @Override
-    public PageResult<OrdersDetail> PageQuery(OrderDTO orderDTO) {
+    public PageResult<orderMainVO> PageQuery(OrderDTO orderDTO) {
         // 参数校验
         if (orderDTO.getPage() == null || orderDTO.getPage() < 1) {
-            orderDTO.setPage(1L); // 设置默认页码
+            orderDTO.setPage(1L);
         }
         if (orderDTO.getPageSize() == null || orderDTO.getPageSize() < 1) {
-            orderDTO.setPageSize(20L); // 设置默认每页大小
+            orderDTO.setPageSize(20L);
         }
 
-        // 构建查询条件
+        // 构建主订单查询条件
         LambdaQueryWrapper<OrderMain> queryWrapper = new LambdaQueryWrapper<>();
 
-        // 根据状态筛选（如果状态不为空）
+        // 根据状态筛选
         if (orderDTO.getStatus() != null && !orderDTO.getStatus().isEmpty()) {
             queryWrapper.eq(OrderMain::getStatus, orderDTO.getStatus());
         }
         queryWrapper.eq(OrderMain::getUserId, AuthenticationContext.getContext());
-//        queryWrapper.eq(OrderMain::getUserId,"1932385841532006401");
 
         // 打印用户ID用于调试
         System.out.println("当前用户ID: " + AuthenticationContext.getContext());
@@ -149,41 +154,126 @@ public class OrderMainServiceImpl extends ServiceImpl<OrderMainMapper, OrderMain
         System.out.println("查询到的订单ID数量: " + mainIds.size());
         System.out.println("订单ID列表: " + mainIds);
 
-        // 构建订单详情查询条件
-        LambdaQueryWrapper<OrdersDetail> queryWrapper1 = new LambdaQueryWrapper<>();
-
-        // 查询mainId在mainIds列表中的订单详情
+        // 构建订单详情查询条件（关联主订单ID）
+        LambdaQueryWrapper<OrdersDetail> detailQuery = new LambdaQueryWrapper<>();
         if (!mainIds.isEmpty()) {
-            queryWrapper1.in(OrdersDetail::getMainId, mainIds);
+            detailQuery.in(OrdersDetail::getMainId, mainIds);
             System.out.println("已设置mainId查询条件");
         } else {
-            // 如果没有订单ID，返回空结果
             System.out.println("没有找到符合条件的订单ID，返回空结果");
             return new PageResult<>(
-                    Collections.emptyList(), // 空数据列表
-                    0L,                      // 总记录数为0
-                    orderDTO.getPage(),      // 当前页码
-                    orderDTO.getPageSize()   // 每页大小
+                    Collections.emptyList(),
+                    0L,
+                    orderDTO.getPage(),
+                    orderDTO.getPageSize()
             );
         }
 
         // 设置分页参数
         Page<OrdersDetail> page = new Page<>(orderDTO.getPage(), orderDTO.getPageSize());
 
-        // 执行查询并打印SQL日志
-        Page<OrdersDetail> orderPage = ordersDetailMapper.selectPage(page, queryWrapper1);
+        // 执行查询
+        Page<OrdersDetail> detailPage = ordersDetailMapper.selectPage(page, detailQuery);
+        System.out.println("查询到的订单详情数量: " + detailPage.getRecords().size());
+        System.out.println("总记录数: " + detailPage.getTotal());
 
-        // 打印查询结果数量
-        System.out.println("查询到的订单详情数量: " + orderPage.getRecords().size());
-        System.out.println("总记录数: " + orderPage.getTotal());
+        // 转换为orderMainVO并获取图片路径
+        List<orderMainVO> voList = convertToVOList(detailPage.getRecords());
 
         // 构建分页结果
         return new PageResult<>(
-                orderPage.getRecords(), // 数据列表
-                orderPage.getTotal(),   // 总记录数
-                orderDTO.getPage(),     // 当前页码
-                orderDTO.getPageSize()  // 每页大小
+                voList,
+                detailPage.getTotal(),
+                orderDTO.getPage(),
+                orderDTO.getPageSize()
         );
+    }
+
+    /**
+     * 将订单详情转换为VO对象并获取图片路径
+     */
+    private List<orderMainVO> convertToVOList(List<OrdersDetail> details) {
+        if (details == null || details.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 按类型分组处理
+        Map<String, List<OrdersDetail>> typeGroup = details.stream()
+                .collect(Collectors.groupingBy(OrdersDetail::getShoppingType));
+
+        // 处理周边商品（类型01）
+        Map<Long, String> surroundingPicMap = new HashMap<>();
+        if (typeGroup.containsKey("01")) {
+            List<Long> ids = typeGroup.get("01").stream()
+                    .map(OrdersDetail::getOutBusinessId)
+                    .collect(Collectors.toList());
+            if (!ids.isEmpty()) {
+                // 确保从数据库获取的ID转换为Long类型
+                List<Surroundings> surroundings = surroundingsMapper.selectList(
+                        new LambdaQueryWrapper<Surroundings>()
+                                .in(Surroundings::getId, ids)
+                );
+
+                for (Surroundings s : surroundings) {
+                    try {
+                        // 将String类型的ID转换为Long
+                        Long id = Long.parseLong(s.getId());
+                        surroundingPicMap.put(id, s.getPic());
+                    } catch (NumberFormatException e) {
+                        // 处理ID无法转换为Long的情况
+                        log.error("无法将ID转换为Long: " + s.getId(), e);
+                    }
+                }
+            }
+        }
+
+        // 处理漫展演出（类型02）
+        Map<Long, String> acgnPicMap = new HashMap<>();
+        if (typeGroup.containsKey("02")) {
+            List<Long> ids = typeGroup.get("02").stream()
+                    .map(OrdersDetail::getOutBusinessId)
+                    .collect(Collectors.toList());
+            if (!ids.isEmpty()) {
+                // 确保从数据库获取的ID转换为Long类型
+                List<Acgn> acgnList = acgnMapper.selectList(
+                        new LambdaQueryWrapper<Acgn>()
+                                .in(Acgn::getId, ids)
+                );
+
+                for (Acgn a : acgnList) {
+                    try {
+                        // 将String类型的ID转换为Long
+                        Long id = Long.parseLong(a.getId());
+                        acgnPicMap.put(id, a.getPic());
+                    } catch (NumberFormatException e) {
+                        // 处理ID无法转换为Long的情况
+                        log.error("无法将ID转换为Long: " + a.getId(), e);
+                    }
+                }
+            }
+        }
+
+        // 转换为VO列表
+        return details.stream().map(detail -> {
+            orderMainVO vo = new orderMainVO();
+            vo.setId(detail.getId());
+            vo.setCreateDate(detail.getCreateDate());
+            vo.setStatus(detail.getStatus());
+            vo.setName(detail.getName());
+            vo.setUnitPrice(detail.getUnitPrice());
+            vo.setOrderNumber(detail.getOrderNumber());
+
+            // 设置图片路径
+            if ("01".equals(detail.getShoppingType())) {
+                vo.setPic(surroundingPicMap.getOrDefault(detail.getOutBusinessId(), ""));
+            } else if ("02".equals(detail.getShoppingType())) {
+                vo.setPic(acgnPicMap.getOrDefault(detail.getOutBusinessId(), ""));
+            } else {
+                vo.setPic("");
+            }
+
+            return vo;
+        }).collect(Collectors.toList());
     }
 
 }

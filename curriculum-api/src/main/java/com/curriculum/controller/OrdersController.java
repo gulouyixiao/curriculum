@@ -5,6 +5,7 @@ import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.dto.OrderParamsDTO;
 import com.curriculum.model.po.OrdersDetail;
 import com.curriculum.model.po.PayRecord;
+import com.curriculum.model.vo.OrderDetailVO;
 import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.OrderMainService;
@@ -71,17 +72,18 @@ public class OrdersController {
 //    TODO 这个地方要加order
     @ApiOperation("查看历史订单")
     @PostMapping("order/listPage")
-    @Anonymous
+//    @Anonymous
     public RestResponse listPage(@Valid @RequestBody OrderDTO orderDTO) throws Exception {
         log.info("{}",orderDTO.getPage().getClass());
         PageResult result = orderMainService.PageQuery(orderDTO);
+//        String result = "1";
         return RestResponse.success(result);
     }
 
     @ApiOperation("查看详细订单")
     @GetMapping("/order/{id}")
     public RestResponse getOrderById(@PathVariable Long id) throws Exception {
-        OrdersDetail orderDetail = ordersDetailService.getById(id);
+        OrderDetailVO orderDetail = ordersDetailService.getByIdWpic(id);
         return RestResponse.success(orderDetail);
     }
 }

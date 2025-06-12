@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/curriculum/acgn")
 @Api(tags = "漫展演出表")
-@Anonymous
+//@Anonymous
 public class AcgnController {
 
     @Autowired
