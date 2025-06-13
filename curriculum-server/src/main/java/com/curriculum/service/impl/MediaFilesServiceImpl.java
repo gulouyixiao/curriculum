@@ -74,7 +74,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     public void addMovie(String fileurl, String originName, long fileSize, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
         Long userId = AuthenticationContext.getContext();
-        userId = 1L;
+//        log.info("用户读取id{}", userId);
         User user = userService.getById(userId);
         String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
 
@@ -101,7 +101,6 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     public void addAnime(String fileurl, String originName, long fileSize, MovieDto movieDto, String fileTime) {
         MediaFiles mediaFiles = new MediaFiles();
         Long userId = AuthenticationContext.getContext();
-        userId = 1L;
         User user = userService.getById(userId);
         String filePath = fileurl.replace("http://127.0.0.1:9000/", "");
 
