@@ -28,7 +28,7 @@ public class Surroundings implements Serializable {
     /**
      * 价格
      */
-    private Float price;
+    private Double price;
 
     /**
      * 品牌

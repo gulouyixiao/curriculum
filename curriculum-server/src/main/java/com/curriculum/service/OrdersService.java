@@ -1,15 +1,11 @@
 package com.curriculum.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.dto.OrderParamsDTO;
-import com.curriculum.model.po.OrderMain;
+import com.curriculum.model.dto.OrderSubmitDTO;
 import com.curriculum.model.po.PayRecord;
-import com.curriculum.model.vo.PageResult;
 import com.curriculum.model.vo.QrcodeVO;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 /**
  * 订单表 服务类
@@ -30,9 +26,15 @@ public interface OrdersService{
 	PayRecord queryPayResult(String payNo);
 
 	/**
-	 * 生成支付二维码
+	 * 生成下单支付二维码
 	 * @return
 	 */
-	QrcodeVO createCode(OrderParamsDTO orderParamsDTO);
+	QrcodeVO createCode(OrderSubmitDTO orderSubmitDTO);
+
+	/**
+	 * 直接支付生成的支付二维码
+	 * @return 结果
+	 */
+	QrcodeVO directCreateCode(OrderParamsDTO orderParamsDTO);
 
 }

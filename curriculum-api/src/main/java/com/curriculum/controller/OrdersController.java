@@ -3,10 +3,12 @@ package com.curriculum.controller;
 import com.curriculum.annotation.Anonymous;
 import com.curriculum.model.dto.OrderDTO;
 import com.curriculum.model.dto.OrderParamsDTO;
+import com.curriculum.model.dto.OrderSubmitDTO;
 import com.curriculum.model.po.OrdersDetail;
 import com.curriculum.model.po.PayRecord;
 import com.curriculum.model.vo.OrderDetailVO;
 import com.curriculum.model.vo.PageResult;
+import com.curriculum.model.vo.QrcodeVO;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.OrderMainService;
 import com.curriculum.service.OrdersDetailService;
@@ -20,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -47,7 +48,8 @@ public class OrdersController {
     @ApiOperation("接收支付结果通知")
     @PostMapping("/receivenotify/{payType}")
     @Anonymous
-    public void receiveNotify(HttpServletRequest request, @PathVariable String payType, HttpServletResponse response){
+    public void receiveNotify(HttpServletRequest request, @PathVariable String payType){
+        log.info("接收支付结果通知：{}");
         ordersService.receiveNotify(request, payType);
     }
 
@@ -63,9 +65,20 @@ public class OrdersController {
 
     @PostMapping("/order/submit")
     @ApiOperation(value = "提交订单")
-    public RestResponse submitOrder(@Valid @RequestBody OrderParamsDTO orderParamsDTO) throws Exception {
-        log.info("提交订单：{}",orderParamsDTO);
-        return RestResponse.success(ordersService.createCode(orderParamsDTO));
+    public RestResponse<QrcodeVO> submitOrder(@Valid @RequestBody OrderSubmitDTO orderSubmitDTO) throws Exception {
+        log.info("提交订单：{}", orderSubmitDTO);
+        return RestResponse.success(ordersService.createCode(orderSubmitDTO));
+    }
+
+    @GetMapping("/generatepaycode")
+    @ApiOperation(value = "生成支付宝支付二维码")
+    public RestResponse<QrcodeVO> alipayCode(OrderParamsDTO orderParamsDTO) throws Exception {
+        log.info("生成支付宝支付二维码：{}", orderParamsDTO);
+
+        QrcodeVO qrcodeVO = ordersService.directCreateCode(orderParamsDTO);
+
+        return RestResponse.success(qrcodeVO);
+
     }
 
 //    @Anonymous

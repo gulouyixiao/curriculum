@@ -1,9 +1,11 @@
 package com.curriculum.controller;
 
 import com.curriculum.annotation.Anonymous;
+import com.curriculum.model.dto.PageParams;
 import com.curriculum.model.dto.SurroundingsDTO;
 import com.curriculum.model.po.Surroundings;
 import com.curriculum.model.vo.PageResult;
+import com.curriculum.model.vo.Products;
 import com.curriculum.model.vo.RestResponse;
 import com.curriculum.service.SurroundingsService;
 import io.swagger.annotations.Api;
@@ -58,5 +60,11 @@ public class SurroundingsController {
 
 
         return RestResponse.success();
+    }
+
+    @GetMapping("/myProducts")
+    @ApiOperation("我的商品")
+    public RestResponse<PageResult> myProducts(PageParams pageParams){
+        return RestResponse.success(surroundingsService.myProducts(pageParams));
     }
 }

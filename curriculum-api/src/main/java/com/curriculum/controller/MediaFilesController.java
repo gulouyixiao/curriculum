@@ -24,7 +24,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/curriculum")
-@Anonymous
 @Api(tags = "媒资信息")
 public class MediaFilesController {
 
@@ -44,7 +43,7 @@ public class MediaFilesController {
         return RestResponse.success("上传成功");
     }
 
-    @Anonymous
+
     @PostMapping("uploadImage")
     @ApiOperation(value = "上传图片")
     public RestResponse uploadImage(@RequestParam(value = "file") MultipartFile file) {

@@ -49,8 +49,6 @@ public class VideoBaseController {
      */
     @PostMapping("/page")
     @ApiOperation(value = "视频番剧分类分页查询")
-    @Anonymous
-
     public RestResponse<PageResult> page(@RequestBody VideoPageParams videoPageParams) {
         log.info("分类番剧分页查询：{}", videoPageParams);
         PageResult pageResult = videoBaseService.PageQuery(videoPageParams);
@@ -60,7 +58,6 @@ public class VideoBaseController {
     /**
      * 标签查询
      */
-    @Anonymous
     @GetMapping("/tags")
     @ApiOperation("获取关键字，标签")
     public RestResponse getTags() {
@@ -74,14 +71,12 @@ public class VideoBaseController {
      */
     @GetMapping("/anime/recommend")
     @ApiOperation(value = "番剧图片轮播推荐")
-    @Anonymous
     public RestResponse<List<VideoBase>> recommend() {
         log.info("番剧图片轮播推荐");
         List<VideoBase> videoBases = videoBaseService.recommend("001003",6);
         return RestResponse.success(videoBases);
     }
 
-    @Anonymous
     @GetMapping("anime/show")
     @ApiOperation(value = "番剧热播前五")
     public RestResponse show() {
@@ -97,7 +92,6 @@ public class VideoBaseController {
      */
     @GetMapping("/comments/page")
     @ApiOperation(value = "获取视频或番剧的评论区")
-    @Anonymous
     public RestResponse comments(CommentsPageParams commentsPageParams) {
         log.info("获取视频或番剧的评论区：{}", commentsPageParams);
         PageResult pageResult = videoCommentsService.commentsPageQuery(commentsPageParams);
@@ -162,7 +156,6 @@ public class VideoBaseController {
         return RestResponse.success(auditList);
     }
 
-    @Anonymous
     @PostMapping("/upload/{type}")
     @ApiOperation(value = "上传视频番剧")
     public RestResponse upload(@PathVariable String type,
@@ -177,9 +170,9 @@ public class VideoBaseController {
         movieDto.setParentId(parentid);
         log.info("上传视频：{}", file);
         String md5 = FileHashUtils.calculateFileHash(file);
-        if (mediaFilesService.selectById(md5)) {
-            return RestResponse.validfail("图片已存在");
-        }
+//        if (mediaFilesService.selectById(md5)) {
+//            return RestResponse.validfail("图片已存在");
+//        }
         String fileurl = fileService.uploadVideo(file);
         String id = fileurl.substring(fileurl.lastIndexOf("/") + 1);
         long fileSize = file.getSize();
